@@ -6,9 +6,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
-
 @SuppressWarnings("serial")
-public class EntityKilledByEntityEvent extends Event{
+public class EntityKilledByEntityEvent extends Event {
 	private LivingEntity attacker;
 	private List<ItemStack> drops;
 	private LivingEntity killed;

@@ -1,9 +1,10 @@
 package com.sleaker.combatevents;
 
+import java.util.logging.Logger;
+
 import net.milkbowl.administrate.AdminHandler;
 
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -13,6 +14,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityListener;
 
 public class CombatEntityListener extends EntityListener {
+	private static Logger log = Logger.getLogger("Minecraft");
 	
 	private CombatEventsCore plugin;
 	
@@ -20,7 +22,7 @@ public class CombatEntityListener extends EntityListener {
 		this.plugin = plugin;
 	}
 	
-	public void onEntityDamaged(EntityDamageEvent event) {
+	public void onEntityDamage(EntityDamageEvent event) {
 		//Disregard this event?
 		if (event.isCancelled() || !isValidEntity(event.getEntity()))
 			return;
@@ -66,6 +68,7 @@ public class CombatEntityListener extends EntityListener {
 
 		//Fire our event if the entity dying is in the killMap
 		if ( plugin.getAttacker(cEntity) != null ) {
+			log.info("[CombatEvents] - Starting new Custom Event, EntityKilledByEntity");
 			EntityKilledByEntityEvent kEvent = new EntityKilledByEntityEvent(plugin.getAttacker(cEntity), cEntity, event.getDrops());
 			plugin.getServer().getPluginManager().callEvent(kEvent);
 			//Reset our drops.
@@ -76,7 +79,7 @@ public class CombatEntityListener extends EntityListener {
 	
 	
 	private boolean isValidEntity (Entity thisEntity) {
-		if ( !(thisEntity instanceof LivingEntity) || thisEntity instanceof HumanEntity )
+		if ( !(thisEntity instanceof LivingEntity) )
 			return false;
 
 		return true;
