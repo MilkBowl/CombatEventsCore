@@ -31,6 +31,10 @@ public class CombatEventsCore extends JavaPlugin {
 		TARGETED_BY_MOB, DAMAGED_BY_MOB, ATTACKED_PLAYER, DAMAGED_BY_PLAYER, PET_TOOK_DAMAGE, PET_ATTACKED
 	}
 	
+	public enum LeaveCombatReason {
+		QUIT, KICK, ERROR, TIMED
+	}
+	
 	@Override
 	public void onDisable() {
 		log.info(plugName + " - v" + this.getDescription().getVersion() + " disabled!");
