@@ -19,8 +19,8 @@ public class CombatEventsCore extends JavaPlugin {
 	private static Logger log = Logger.getLogger("Minecraft");
 	private CombatEntityListener entityListener = new CombatEntityListener(this);
 	private CombatPlayerListener playerListener = new CombatPlayerListener(this);
-    public AdminHandler admins = null;
-    
+	public AdminHandler admins = null;
+
 	private static Map<LivingEntity, LivingEntity> killMap = new ConcurrentHashMap<LivingEntity, LivingEntity>();
 	private static Map<String, CombatPlayer> inCombat = new ConcurrentHashMap<String, CombatPlayer>();
 	String plugName = "[CombatEvents]";
@@ -31,11 +31,11 @@ public class CombatEventsCore extends JavaPlugin {
 	public enum CombatReason {
 		TARGETED_BY_MOB, DAMAGED_BY_MOB, ATTACKED_PLAYER, DAMAGED_BY_PLAYER, PET_TOOK_DAMAGE, PET_ATTACKED, CUSTOM
 	}
-	
+
 	public enum LeaveCombatReason {
 		QUIT, KICK, ERROR, TIMED, DEATH, CUSTOM
 	}
-	
+
 	@Override
 	public void onDisable() {
 		log.info(plugName + " - v" + this.getDescription().getVersion() + " disabled!");
@@ -50,23 +50,23 @@ public class CombatEventsCore extends JavaPlugin {
 		pm.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Highest, this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Monitor, this);
 		pm.registerEvent(Event.Type.PLAYER_KICK, playerListener, Priority.Monitor, this);
-		
+
 		//setup our optional dependencies
 		setupOptionals();
 		log.info(plugName + " - v" + this.getDescription().getVersion() + " enabled!");
 
 	}
-	
-    private void setupOptionals() {
+
+	private void setupOptionals() {
 		if (admins == null) {
-            Plugin admin = this.getServer().getPluginManager().getPlugin("Administrate");
-            if (admin != null) {
-                admins = ((Administrate) admin).getAdminHandler();
-                log.info(plugName + " - Successfully hooked into Administrate v" + admin.getDescription().getVersion());
-            }
-        } 
-    }
-    
+			Plugin admin = this.getServer().getPluginManager().getPlugin("Administrate");
+			if (admin != null) {
+				admins = ((Administrate) admin).getAdminHandler();
+				log.info(plugName + " - Successfully hooked into Administrate v" + admin.getDescription().getVersion());
+			}
+		} 
+	}
+
 	public LivingEntity getAttacker(LivingEntity  entity) {
 		return killMap.get(entity);
 	}
@@ -76,7 +76,7 @@ public class CombatEventsCore extends JavaPlugin {
 			return false;
 		else
 			killMap.remove(entity);
-		
+
 		return true;
 	}
 
@@ -88,21 +88,29 @@ public class CombatEventsCore extends JavaPlugin {
 
 		return true;
 	}
-	
-	//TODO: add Entered Combat Time
-	
+
+
 	/**
 	 * Add the player to the inCombat mapping with necessary info
+	 * If the player is already in-combat and we are re-adding them
+	 * only reset
 	 * 
 	 */
 	public void enterCombat(String player, CombatPlayer cPlayer) {
-		inCombat.put(player, cPlayer);
+		if (!inCombat.containsKey(player))
+			inCombat.put(player, cPlayer);
+		else {
+			CombatPlayer thisCPlayer = inCombat.get(player);
+			thisCPlayer.setCombatTime(System.currentTimeMillis());
+			thisCPlayer.setInventory(cPlayer.getInventory());
+			thisCPlayer.setReason(cPlayer.getReason());
+		}
 	}
-	
+
 	public void enterCombat(Player player, CombatPlayer cPlayer) {
 		enterCombat(player.getName(), cPlayer);
 	}
-	
+
 	/**
 	 * 
 	 * @param player
@@ -111,23 +119,23 @@ public class CombatEventsCore extends JavaPlugin {
 	public CombatPlayer leaveCombat(String player) {
 		return inCombat.remove(player);
 	}
-	
+
 	public CombatPlayer leaveCombat(Player player) {
 		return leaveCombat(player.getName());
 	}
-	
+
 	public CombatPlayer getCombatPlayer(String player) {
 		return inCombat.get(player);
 	}
-	
+
 	public CombatPlayer getCombatPlayer (Player player) {
 		return getCombatPlayer(player.getName());
 	}
-	
+
 	public boolean isInCombat(String player) {
 		return inCombat.containsKey(player);
 	}
-	
+
 	public boolean isInCombat(Player player) {
 		return isInCombat(player.getName());
 	}

@@ -8,13 +8,14 @@ import com.sleaker.combatevents.CombatEventsCore.CombatReason;
 public class CombatPlayer {
 	private Player player;
 	private CombatReason reason;
-	private int taskId;
 	private ItemStack[] inventory;
+	private long combatTime;
 
 	CombatPlayer(Player player, CombatReason reason) {
 		this.player = player;
 		this.inventory = player.getInventory().getContents();
 		this.reason = reason;
+		this.combatTime = System.currentTimeMillis();
 	}
 	
 	public CombatReason getReason() {
@@ -23,14 +24,6 @@ public class CombatPlayer {
 
 	public void setReason(CombatReason reason) {
 		this.reason = reason;
-	}
-
-	public int getTaskId() {
-		return taskId;
-	}
-
-	public void setTaskId(int taskId) {
-		this.taskId = taskId;
 	}
 
 	public ItemStack[] getInventory() {
@@ -43,5 +36,13 @@ public class CombatPlayer {
 
 	public Player getPlayer() {
 		return player;
+	}
+
+	public long getCombatTime() {
+		return combatTime;
+	}
+
+	public void setCombatTime(long combatTime) {
+		this.combatTime = combatTime;
 	}	
 }
