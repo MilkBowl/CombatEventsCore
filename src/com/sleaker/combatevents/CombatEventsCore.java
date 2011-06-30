@@ -15,6 +15,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.sleaker.combatevents.tasks.LeaveCombatTask;
+
 public class CombatEventsCore extends JavaPlugin {
 	private static Logger log = Logger.getLogger("Minecraft");
 	private CombatEntityListener entityListener = new CombatEntityListener(this);
@@ -29,7 +31,7 @@ public class CombatEventsCore extends JavaPlugin {
 	 * Defines a reason for the player entering combat
 	 */
 	public enum CombatReason {
-		TARGETED_BY_MOB, DAMAGED_BY_MOB, ATTACKED_PLAYER, DAMAGED_BY_PLAYER, PET_TOOK_DAMAGE, PET_ATTACKED, CUSTOM
+		TARGETED_BY_MOB, DAMAGED_BY_MOB, ATTACKED_MOB, ATTACKED_PLAYER, DAMAGED_BY_PLAYER, PET_TOOK_DAMAGE, PET_ATTACKED, CUSTOM
 	}
 
 	public enum LeaveCombatReason {
@@ -104,14 +106,17 @@ public class CombatEventsCore extends JavaPlugin {
 			inCombat.put(player.getName(), cPlayer);
 			player.sendMessage(Config.getEnterCombatMessage());
 		} else {
+			//Create the task for leaving combat
+			LeaveCombatTask leaveTask = new LeaveCombatTask(player, LeaveCombatReason.TIMED, this);
 			CombatPlayer thisCPlayer = inCombat.get(player);
-			thisCPlayer.setCombatTime(System.currentTimeMillis());
 			thisCPlayer.setInventory(cPlayer.getInventory());
 			thisCPlayer.setReason(cPlayer.getReason());
+			thisCPlayer.setTaskId(getServer().getScheduler().scheduleAsyncDelayedTask(this, leaveTask, Config.getCombatTime() * 20));
 		}
 	}
 
 	/**
+	 * removes a player from combat
 	 * 
 	 * @param player
 	 * @return
@@ -135,5 +140,21 @@ public class CombatEventsCore extends JavaPlugin {
 
 	public boolean isInCombat(Player player) {
 		return isInCombat(player.getName());
+	}
+	
+	public int getCombatTask(Player player) {
+		return inCombat.get(player).getTaskId();
+	}
+	
+	public void setCombatTask(Player player, int taskId) {
+		inCombat.get(player).setTaskId(taskId);
+	}
+	
+	public void setCombatReason(Player player, CombatReason reason) {
+		inCombat.get(player).setReason(reason);
+	}
+	
+	public CombatReason getCombatReason (Player player) {
+		return inCombat.get(player).getReason();
 	}
 }

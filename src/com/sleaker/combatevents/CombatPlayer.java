@@ -11,14 +11,12 @@ public class CombatPlayer {
 	private Player player;
 	private CombatReason reason;
 	private ItemStack[] inventory;
-	private long combatTime;
 	private int taskId;
 
 	CombatPlayer(Player player, CombatReason reason, CombatEventsCore plugin) {
 		this.player = player;
 		this.inventory = player.getInventory().getContents();
 		this.reason = reason;
-		this.combatTime = System.currentTimeMillis();
 		//if we create a new object always force the player into combat so make a new scheduler for leaving combat
 		taskId = plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new LeaveCombatTask(player, LeaveCombatReason.TIMED, plugin), Config.getCombatTime() * 20);
 	}
@@ -41,14 +39,6 @@ public class CombatPlayer {
 
 	public Player getPlayer() {
 		return player;
-	}
-
-	public long getCombatTime() {
-		return combatTime;
-	}
-
-	public void setCombatTime(long combatTime) {
-		this.combatTime = combatTime;
 	}
 
 	public int getTaskId() {

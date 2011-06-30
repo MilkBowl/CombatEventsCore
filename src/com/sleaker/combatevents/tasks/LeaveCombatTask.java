@@ -27,7 +27,7 @@ public class LeaveCombatTask implements Runnable {
 					return;
 				else {
 					
-					//Player was not allowed to leave combat so we need to re-create a new task to force them to try leaving combat again.
+					//TODO: Player was not allowed to leave combat so we need to re-create a new task to force them to try leaving combat again.
 					
 				}
 			} catch (Exception e) {

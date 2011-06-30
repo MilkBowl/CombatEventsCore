@@ -40,8 +40,8 @@ public class CombatEntityListener extends EntityListener {
 		//If this target is a Player and within the proper distance fire our EnterCombatEvent
 		//TODO: Configure option to set Target Distance knocking a player in combat
 		if (Utility.getDistance(player.getLocation(), cEntity.getLocation()) <= 20) {
-			if (throwPlayerEnterCombatEvent(player, CombatReason.TARGETED_BY_MOB)) 
-				plugin.enterCombat(player, new CombatPlayer(player, CombatReason.TARGETED_BY_MOB, plugin));
+			plugin.getServer().getPluginManager().callEvent(new PlayerEnterCombatEvent(player, CombatReason.TARGETED_BY_MOB));
+			plugin.enterCombat(player, new CombatPlayer(player, CombatReason.TARGETED_BY_MOB, plugin));
 		}
 	}
 
@@ -54,50 +54,59 @@ public class CombatEntityListener extends EntityListener {
 		LivingEntity cEntity = (LivingEntity) event.getEntity();
 		
 		//Reasons to pop us into combat
-		if (cEntity instanceof Tameable) {
+		CombatReason reason = null;
+		Player player = null;
+		Player pvpPlayer = null;
+		if (cEntity instanceof Tameable && Config.isPetTriggersCombat()) {
 			//Lets get the owner and make sure it's not null
-			Player player = getOwner((Tameable)cEntity);
-			if (player != null)
-				//Try to throw the new event, and add the player if it doesn't get cancelled
-				if (throwPlayerEnterCombatEvent(player, CombatReason.PET_TOOK_DAMAGE))
-					plugin.enterCombat(player, new CombatPlayer(player, CombatReason.PET_TOOK_DAMAGE, plugin));
+			player = getOwner((Tameable)cEntity);
+			if (player != null) {
+				reason = CombatReason.PET_TOOK_DAMAGE;
+			}
 		} else if (event instanceof EntityDamageByEntityEvent) {
 			EntityDamageByEntityEvent subEvent = (EntityDamageByEntityEvent) event;
 			if (subEvent.getDamager() instanceof Tameable) {
-				Player player = getOwner((Tameable) subEvent.getDamager());
-				if (player != null)
-					//Try to throw the new event, and add the player if it doesn't get cancelled
-					if (throwPlayerEnterCombatEvent(player, CombatReason.PET_ATTACKED))
-						plugin.enterCombat(player, new CombatPlayer(player, CombatReason.PET_ATTACKED, plugin));
+				player = getOwner((Tameable) subEvent.getDamager());
+				if (player != null) {
+					reason = CombatReason.PET_ATTACKED;
+				}
 			} else if (subEvent.getEntity() instanceof Player) {
-				Player player = (Player) subEvent.getEntity();
-				//Try to throw the new event, and add the player if it doesn't get cancelled
-				if (throwPlayerEnterCombatEvent(player, CombatReason.DAMAGED_BY_PLAYER))
-					plugin.enterCombat(player, new CombatPlayer(player, CombatReason.DAMAGED_BY_PLAYER, plugin));
-			} else if (subEvent.getDamager() instanceof Player) {
-				Player player = (Player) subEvent.getDamager();
-				//Try to throw the new event, and add the player if it doesn't get cancelled
-				if (throwPlayerEnterCombatEvent(player, CombatReason.ATTACKED_PLAYER))
-					plugin.enterCombat(player, new CombatPlayer(player, CombatReason.ATTACKED_PLAYER, plugin));
-			}
+				player = (Player) subEvent.getEntity();
+				if (subEvent.getDamager() instanceof Player) {
+					pvpPlayer = (Player) subEvent.getDamager();
+					reason = CombatReason.DAMAGED_BY_PLAYER;
+				} else
+					reason = CombatReason.DAMAGED_BY_MOB;
+				//TODO: We need to fire 2 events for PvP 1 for the Damager, One for the Damaged
+			} else if (subEvent.getDamager() instanceof Player && !(subEvent.getEntity() instanceof Player)) {
+				player = (Player) subEvent.getDamager();
+				reason = CombatReason.ATTACKED_MOB;
+			} 
 		} else if (event instanceof EntityDamageByProjectileEvent) {
 			EntityDamageByProjectileEvent subEvent = (EntityDamageByProjectileEvent) event;
-			if (subEvent.getDamager() instanceof Tameable) {
-				Player player = getOwner((Tameable) subEvent.getDamager());
-				if (player != null)
-					//Try to throw the new event, and add the player if it doesn't get cancelled
-					if (throwPlayerEnterCombatEvent(player, CombatReason.PET_ATTACKED))
-						plugin.enterCombat(player, new CombatPlayer(player, CombatReason.PET_ATTACKED, plugin));
+			if (subEvent.getDamager() instanceof Tameable && Config.isPetTriggersCombat()) {
+				player = getOwner((Tameable) subEvent.getDamager());
+				if (player != null) {
+					reason = CombatReason.PET_ATTACKED;
+				}
 			} else if (subEvent.getEntity() instanceof Player) {
-				Player player = (Player) subEvent.getEntity();
-				//Try to throw the new event, and add the player if it doesn't get cancelled
-				if (throwPlayerEnterCombatEvent(player, CombatReason.DAMAGED_BY_PLAYER))
-					plugin.enterCombat(player, new CombatPlayer(player,  CombatReason.DAMAGED_BY_PLAYER, plugin));
-			} else if (subEvent.getDamager() instanceof Player) {
-				Player player = (Player) subEvent.getDamager();
-				//Try to throw the new event, and add the player if it doesn't get cancelled
-				if (throwPlayerEnterCombatEvent(player, CombatReason.ATTACKED_PLAYER))
-					plugin.enterCombat(player, new CombatPlayer(player, CombatReason.ATTACKED_PLAYER, plugin));
+				player = (Player) subEvent.getEntity();
+				if (subEvent.getDamager() instanceof Player) {
+					pvpPlayer = (Player) subEvent.getDamager();
+					reason = CombatReason.DAMAGED_BY_PLAYER;
+				} else
+					reason = CombatReason.DAMAGED_BY_MOB;
+			}  else if (subEvent.getDamager() instanceof Player && !(subEvent.getEntity() instanceof Player)) {
+				player = (Player) subEvent.getDamager();
+				reason = CombatReason.ATTACKED_MOB;
+			}
+		}
+		//TODO: Fire our events + update combat type;
+		if (reason != null && player != null) {
+			plugin.enterCombat(player, new CombatPlayer(player, reason, plugin));
+			//If this is a PvP event lets tag the other player as in-combat or update their times
+			if (reason.equals(CombatReason.DAMAGED_BY_PLAYER)) {
+				plugin.enterCombat(pvpPlayer, new CombatPlayer(pvpPlayer, CombatReason.ATTACKED_PLAYER, plugin));
 			}
 		}
 
@@ -137,14 +146,17 @@ public class CombatEntityListener extends EntityListener {
 			return;
 
 		LivingEntity cEntity = (LivingEntity) event.getEntity();
-		
+
 		//If this is a player remove them from Combat
 		if (cEntity instanceof Player) {
 			Player player = (Player) cEntity;
 			if (throwPlayerLeaveCombatEvent(player, LeaveCombatReason.DEATH))
-				plugin.leaveCombat(player);	
+				//Cancel the task and remove the player from the combat map and send our leave combat message
+				plugin.getServer().getScheduler().cancelTask(plugin.getCombatTask(player));
+			plugin.leaveCombat(player);	
+			player.sendMessage(Config.getLeaveCombatMessage());
 		}
-		
+
 		//Fire our event if the entity dying is in the killMap
 		if ( plugin.getAttacker(cEntity) != null ) {
 			log.info("[CombatEvents] - Starting new Custom Event, EntityKilledByEntity");
@@ -154,16 +166,9 @@ public class CombatEntityListener extends EntityListener {
 			event.getDrops().addAll(kEvent.getDrops());
 			plugin.removeKilled(cEntity);
 		}
-		
+
 	}
 
-	private boolean throwPlayerEnterCombatEvent(Player player, CombatReason reason) {
-		//Make the new event object and call it.
-		PlayerEnterCombatEvent cEvent = new PlayerEnterCombatEvent(player, reason);
-		plugin.getServer().getPluginManager().callEvent(cEvent);
-		return !cEvent.isCancelled();
-	}
-	
 	private boolean throwPlayerLeaveCombatEvent(Player player, LeaveCombatReason reason) {
 		PlayerLeaveCombatEvent event = new PlayerLeaveCombatEvent(player, reason);
 		plugin.getServer().getPluginManager().callEvent(event);
