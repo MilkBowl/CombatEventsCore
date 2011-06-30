@@ -17,6 +17,7 @@ public class Config {
 	//Whether pets should toggle combat or not
 	private static boolean petTriggersCombat = true;
 	private static Set<String> denyCommands = new HashSet<String>();
+	private static String denyCommandMessage = "You can not use that command while in combat!";
 	
 	/**
 	 * Initialize the Configuration from file
@@ -39,14 +40,19 @@ public class Config {
 		
 		config = plugin.getConfiguration();
 		if (config.getKeys(null).isEmpty()) {
+			//Default Options
 			config.setProperty("pet-triggers-combat", petTriggersCombat);
 			config.setProperty("combat-time", combatTime);
 			config.setProperty("disabled-commands", null);
+			//Default Messages
+			config.setProperty("messages.deny-command-message", denyCommandMessage);
 		}
-		
+		//Load the Options
 		petTriggersCombat = config.getBoolean("pet-triggers-combat", petTriggersCombat);
 		combatTime = config.getInt("combat-time", combatTime);
 		denyCommands.addAll(config.getStringList("disabled-commands", null));
+		//Load the messages
+		denyCommandMessage = config.getString("messages.deny-command-message", denyCommandMessage);
 		
 		config.save();
 	}
@@ -73,5 +79,13 @@ public class Config {
 	}
 	public static boolean isDeniedCommand(String command) {
 		return Config.denyCommands.contains(command);
+	}
+
+	public static Set<String> getDenyCommands() {
+		return denyCommands;
+	}
+
+	public static String getDenyCommandMessage() {
+		return denyCommandMessage;
 	}
 }

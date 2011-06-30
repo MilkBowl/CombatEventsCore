@@ -1,6 +1,7 @@
 package com.sleaker.combatevents;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -14,7 +15,21 @@ public class CombatPlayerListener extends PlayerListener {
 		this.plugin = plugin;
 	}
 
-	public void onPlayerQuit (PlayerQuitEvent event) {
+	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+		if (event.isCancelled() || Config.getDenyCommands().isEmpty())
+			return;
+		
+		String message = event.getMessage();
+		for (String cmd : Config.getDenyCommands()) {
+			if (message.startsWith("/" + cmd)) {
+				event.setCancelled(true);
+				event.getPlayer().sendMessage(Config.getDenyCommandMessage());
+				return;
+			}
+		}
+	}
+	
+	public void onPlayerQuit (PlayerQuitEvent event) { 
 		//Cleanup the player if they are kicked.
 		if (plugin.isInCombat(event.getPlayer())) {
 			if (throwPlayerLeaveCombatEvent(event.getPlayer(), LeaveCombatReason.QUIT))

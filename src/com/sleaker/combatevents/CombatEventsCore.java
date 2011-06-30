@@ -52,6 +52,7 @@ public class CombatEventsCore extends JavaPlugin {
 		pm.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Highest, this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Monitor, this);
 		pm.registerEvent(Event.Type.PLAYER_KICK, playerListener, Priority.Monitor, this);
+		pm.registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, playerListener, Priority.High, this);
 
 		//setup our optional dependencies
 		setupOptionals();
