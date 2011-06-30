@@ -43,6 +43,8 @@ public class CombatEventsCore extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		
+		Config.initialize(this);
 
 		PluginManager pm = this.getServer().getPluginManager();
 		pm.registerEvent(Event.Type.ENTITY_TARGET, entityListener, Priority.Monitor, this);
