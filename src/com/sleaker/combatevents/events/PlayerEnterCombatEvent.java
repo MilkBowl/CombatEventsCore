@@ -1,4 +1,4 @@
-package com.sleaker.combatevents;
+package com.sleaker.combatevents.events;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -14,7 +14,7 @@ public class PlayerEnterCombatEvent extends Event implements Cancellable {
 	private boolean cancel = false;
 	private CombatReason reason;
 	
-	PlayerEnterCombatEvent(Player player, CombatReason reason) {
+	public PlayerEnterCombatEvent(Player player, CombatReason reason) {
 		super("PlayerEnterCombatEvent");
 		this.player = player;
 		this.reason = reason;

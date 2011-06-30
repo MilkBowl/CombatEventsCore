@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.sleaker.combatevents.CombatEventsCore.LeaveCombatReason;
+import com.sleaker.combatevents.events.PlayerLeaveCombatEvent;
 
 public class CombatPlayerListener extends PlayerListener {
 	CombatEventsCore plugin;

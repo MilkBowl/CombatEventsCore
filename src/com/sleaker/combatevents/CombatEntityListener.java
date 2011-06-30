@@ -18,6 +18,9 @@ import org.bukkit.event.entity.EntityTargetEvent;
 
 import com.sleaker.combatevents.CombatEventsCore.CombatReason;
 import com.sleaker.combatevents.CombatEventsCore.LeaveCombatReason;
+import com.sleaker.combatevents.events.EntityKilledByEntityEvent;
+import com.sleaker.combatevents.events.PlayerEnterCombatEvent;
+import com.sleaker.combatevents.events.PlayerLeaveCombatEvent;
 
 public class CombatEntityListener extends EntityListener {
 	private static Logger log = Logger.getLogger("Minecraft");
@@ -38,7 +41,7 @@ public class CombatEntityListener extends EntityListener {
 		//TODO: Configure option to set Target Distance knocking a player in combat
 		if (Utility.getDistance(player.getLocation(), cEntity.getLocation()) <= 20) {
 			if (throwPlayerEnterCombatEvent(player, CombatReason.TARGETED_BY_MOB)) 
-				plugin.enterCombat(player, new CombatPlayer(player, CombatReason.TARGETED_BY_MOB));
+				plugin.enterCombat(player, new CombatPlayer(player, CombatReason.TARGETED_BY_MOB, plugin));
 		}
 	}
 
@@ -57,7 +60,7 @@ public class CombatEntityListener extends EntityListener {
 			if (player != null)
 				//Try to throw the new event, and add the player if it doesn't get cancelled
 				if (throwPlayerEnterCombatEvent(player, CombatReason.PET_TOOK_DAMAGE))
-					plugin.enterCombat(player, new CombatPlayer(player, CombatReason.PET_TOOK_DAMAGE));
+					plugin.enterCombat(player, new CombatPlayer(player, CombatReason.PET_TOOK_DAMAGE, plugin));
 		} else if (event instanceof EntityDamageByEntityEvent) {
 			EntityDamageByEntityEvent subEvent = (EntityDamageByEntityEvent) event;
 			if (subEvent.getDamager() instanceof Tameable) {
@@ -65,17 +68,17 @@ public class CombatEntityListener extends EntityListener {
 				if (player != null)
 					//Try to throw the new event, and add the player if it doesn't get cancelled
 					if (throwPlayerEnterCombatEvent(player, CombatReason.PET_ATTACKED))
-						plugin.enterCombat(player, new CombatPlayer(player, CombatReason.PET_ATTACKED));
+						plugin.enterCombat(player, new CombatPlayer(player, CombatReason.PET_ATTACKED, plugin));
 			} else if (subEvent.getEntity() instanceof Player) {
 				Player player = (Player) subEvent.getEntity();
 				//Try to throw the new event, and add the player if it doesn't get cancelled
 				if (throwPlayerEnterCombatEvent(player, CombatReason.DAMAGED_BY_PLAYER))
-					plugin.enterCombat(player, new CombatPlayer(player, CombatReason.DAMAGED_BY_PLAYER));
+					plugin.enterCombat(player, new CombatPlayer(player, CombatReason.DAMAGED_BY_PLAYER, plugin));
 			} else if (subEvent.getDamager() instanceof Player) {
 				Player player = (Player) subEvent.getDamager();
 				//Try to throw the new event, and add the player if it doesn't get cancelled
 				if (throwPlayerEnterCombatEvent(player, CombatReason.ATTACKED_PLAYER))
-					plugin.enterCombat(player, new CombatPlayer(player, CombatReason.ATTACKED_PLAYER));
+					plugin.enterCombat(player, new CombatPlayer(player, CombatReason.ATTACKED_PLAYER, plugin));
 			}
 		} else if (event instanceof EntityDamageByProjectileEvent) {
 			EntityDamageByProjectileEvent subEvent = (EntityDamageByProjectileEvent) event;
@@ -84,17 +87,17 @@ public class CombatEntityListener extends EntityListener {
 				if (player != null)
 					//Try to throw the new event, and add the player if it doesn't get cancelled
 					if (throwPlayerEnterCombatEvent(player, CombatReason.PET_ATTACKED))
-						plugin.enterCombat(player, new CombatPlayer(player, CombatReason.PET_ATTACKED));
+						plugin.enterCombat(player, new CombatPlayer(player, CombatReason.PET_ATTACKED, plugin));
 			} else if (subEvent.getEntity() instanceof Player) {
 				Player player = (Player) subEvent.getEntity();
 				//Try to throw the new event, and add the player if it doesn't get cancelled
 				if (throwPlayerEnterCombatEvent(player, CombatReason.DAMAGED_BY_PLAYER))
-					plugin.enterCombat(player, new CombatPlayer(player,  CombatReason.DAMAGED_BY_PLAYER));
+					plugin.enterCombat(player, new CombatPlayer(player,  CombatReason.DAMAGED_BY_PLAYER, plugin));
 			} else if (subEvent.getDamager() instanceof Player) {
 				Player player = (Player) subEvent.getDamager();
 				//Try to throw the new event, and add the player if it doesn't get cancelled
 				if (throwPlayerEnterCombatEvent(player, CombatReason.ATTACKED_PLAYER))
-					plugin.enterCombat(player, new CombatPlayer(player, CombatReason.ATTACKED_PLAYER));
+					plugin.enterCombat(player, new CombatPlayer(player, CombatReason.ATTACKED_PLAYER, plugin));
 			}
 		}
 

@@ -1,4 +1,4 @@
-package com.sleaker.combatevents;
+package com.sleaker.combatevents.events;
 
 import java.util.List;
 

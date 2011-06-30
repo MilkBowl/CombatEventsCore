@@ -43,7 +43,7 @@ public class CombatEventsCore extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		
+
 		Config.initialize(this);
 
 		PluginManager pm = this.getServer().getPluginManager();
@@ -99,10 +99,11 @@ public class CombatEventsCore extends JavaPlugin {
 	 * only reset
 	 * 
 	 */
-	public void enterCombat(String player, CombatPlayer cPlayer) {
-		if (!inCombat.containsKey(player))
-			inCombat.put(player, cPlayer);
-		else {
+	public void enterCombat(Player player, CombatPlayer cPlayer) {
+		if (!inCombat.containsKey(player)) {
+			inCombat.put(player.getName(), cPlayer);
+			player.sendMessage(Config.getEnterCombatMessage());
+		} else {
 			CombatPlayer thisCPlayer = inCombat.get(player);
 			thisCPlayer.setCombatTime(System.currentTimeMillis());
 			thisCPlayer.setInventory(cPlayer.getInventory());
@@ -110,21 +111,14 @@ public class CombatEventsCore extends JavaPlugin {
 		}
 	}
 
-	public void enterCombat(Player player, CombatPlayer cPlayer) {
-		enterCombat(player.getName(), cPlayer);
-	}
-
 	/**
 	 * 
 	 * @param player
 	 * @return
 	 */
-	public CombatPlayer leaveCombat(String player) {
-		return inCombat.remove(player);
-	}
-
 	public CombatPlayer leaveCombat(Player player) {
-		return leaveCombat(player.getName());
+		player.sendMessage(Config.getLeaveCombatMessage());
+		return inCombat.remove(player.getName());
 	}
 
 	public CombatPlayer getCombatPlayer(String player) {
