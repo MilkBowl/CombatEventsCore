@@ -29,7 +29,7 @@ public class PlayerLeaveCombatEvent extends Event implements Cancellable {
 	 * 
 	 */
 	public void setCancelled(boolean cancel) {
-		if (reason.equals(LeaveCombatReason.TIMED))
+		if (reason.equals(LeaveCombatReason.TIMED) || reason.equals(LeaveCombatReason.CUSTOM))
 			this.cancel = cancel;
 	}
 
