@@ -17,6 +17,7 @@ import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import com.sleaker.combatevents.CombatEventsCore.CombatReason;
+import com.sleaker.combatevents.CombatEventsCore.LeaveCombatReason;
 
 public class CombatEntityListener extends EntityListener {
 	private static Logger log = Logger.getLogger("Minecraft");
@@ -133,7 +134,14 @@ public class CombatEntityListener extends EntityListener {
 			return;
 
 		LivingEntity cEntity = (LivingEntity) event.getEntity();
-
+		
+		//If this is a player remove them from Combat
+		if (cEntity instanceof Player) {
+			Player player = (Player) cEntity;
+			if (throwPlayerLeaveCombatEvent(player, LeaveCombatReason.DEATH))
+				plugin.leaveCombat(player);	
+		}
+		
 		//Fire our event if the entity dying is in the killMap
 		if ( plugin.getAttacker(cEntity) != null ) {
 			log.info("[CombatEvents] - Starting new Custom Event, EntityKilledByEntity");
@@ -143,6 +151,7 @@ public class CombatEntityListener extends EntityListener {
 			event.getDrops().addAll(kEvent.getDrops());
 			plugin.removeKilled(cEntity);
 		}
+		
 	}
 
 	private boolean throwPlayerEnterCombatEvent(Player player, CombatReason reason) {
@@ -150,6 +159,13 @@ public class CombatEntityListener extends EntityListener {
 		PlayerEnterCombatEvent cEvent = new PlayerEnterCombatEvent(player, reason);
 		plugin.getServer().getPluginManager().callEvent(cEvent);
 		return !cEvent.isCancelled();
+	}
+	
+	private boolean throwPlayerLeaveCombatEvent(Player player, LeaveCombatReason reason) {
+		PlayerLeaveCombatEvent event = new PlayerLeaveCombatEvent(player, reason);
+		plugin.getServer().getPluginManager().callEvent(event);
+		//Return if the event was successful
+		return !event.isCancelled();
 	}
 
 	private Player getOwner (Tameable tEntity) {

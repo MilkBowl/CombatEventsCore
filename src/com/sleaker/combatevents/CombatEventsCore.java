@@ -18,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class CombatEventsCore extends JavaPlugin {
 	private static Logger log = Logger.getLogger("Minecraft");
 	private CombatEntityListener entityListener = new CombatEntityListener(this);
+	private CombatPlayerListener playerListener = new CombatPlayerListener(this);
     public AdminHandler admins = null;
     
 	private static Map<LivingEntity, LivingEntity> killMap = new ConcurrentHashMap<LivingEntity, LivingEntity>();
@@ -32,7 +33,7 @@ public class CombatEventsCore extends JavaPlugin {
 	}
 	
 	public enum LeaveCombatReason {
-		QUIT, KICK, ERROR, TIMED
+		QUIT, KICK, ERROR, TIMED, DEATH
 	}
 	
 	@Override
@@ -44,8 +45,11 @@ public class CombatEventsCore extends JavaPlugin {
 	public void onEnable() {
 
 		PluginManager pm = this.getServer().getPluginManager();
+		pm.registerEvent(Event.Type.ENTITY_TARGET, entityListener, Priority.Monitor, this);
 		pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Monitor, this);
 		pm.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Highest, this);
+		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Monitor, this);
+		pm.registerEvent(Event.Type.PLAYER_KICK, playerListener, Priority.Monitor, this);
 		
 		//setup our optional dependencies
 		setupOptionals();
