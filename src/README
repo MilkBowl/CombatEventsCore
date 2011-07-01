@@ -1,0 +1,8 @@
+CombatEventsCore implements new Combat centric events for plugins that need to track Combat more heavily:
+
+Currently there are 3 new Events:
+
+EntityKilledByEntityEvent
+PlayerEnterCombatEvent
+PlayerLeaveCombatEvent
+
