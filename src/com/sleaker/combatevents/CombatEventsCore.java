@@ -108,7 +108,7 @@ public class CombatEventsCore extends JavaPlugin {
 		} else {
 			//Create the task for leaving combat
 			LeaveCombatTask leaveTask = new LeaveCombatTask(player, LeaveCombatReason.TIMED, this);
-			CombatPlayer thisCPlayer = inCombat.get(player);
+			CombatPlayer thisCPlayer = inCombat.get(player.getName());
 			thisCPlayer.setInventory(cPlayer.getInventory());
 			thisCPlayer.setReason(cPlayer.getReason());
 			thisCPlayer.setTaskId(getServer().getScheduler().scheduleAsyncDelayedTask(this, leaveTask, Config.getCombatTime() * 20));
