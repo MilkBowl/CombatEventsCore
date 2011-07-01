@@ -16,6 +16,7 @@ public class Config {
 	private static Configuration config;
 	//Whether pets should toggle combat or not
 	private static boolean petTriggersCombat = true;
+	private static boolean targetTriggersCombat = true;
 	private static Set<String> denyCommands = new HashSet<String>();
 	private static String denyCommandMessage = "You can not use that command while in combat!";
 	private static String leaveCombatMessage = "You have left combat!";
@@ -44,6 +45,7 @@ public class Config {
 		if (config.getKeys(null).isEmpty()) {
 			//Default Options
 			config.setProperty("pet-triggers-combat", petTriggersCombat);
+			config.setProperty("target-triggers-combat", targetTriggersCombat);
 			config.setProperty("combat-time", combatTime);
 			config.setProperty("disabled-commands", null);
 			//Default Messages
@@ -53,6 +55,7 @@ public class Config {
 		}
 		//Load the Options
 		petTriggersCombat = config.getBoolean("pet-triggers-combat", petTriggersCombat);
+		targetTriggersCombat = config.getBoolean("target-triggers-combat", targetTriggersCombat);
 		combatTime = config.getInt("combat-time", combatTime);
 		denyCommands.addAll(config.getStringList("disabled-commands", null));
 		//Load the messages
@@ -101,6 +104,10 @@ public class Config {
 
 	public static String getEnterCombatMessage() {
 		return enterCombatMessage;
+	}
+
+	public static boolean isTargetTriggersCombat() {
+		return targetTriggersCombat;
 	}
 
 }

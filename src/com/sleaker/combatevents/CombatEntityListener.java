@@ -32,7 +32,7 @@ public class CombatEntityListener extends EntityListener {
 	}
 
 	public void OnEntityTarget(EntityTargetEvent event) {
-		if (event.isCancelled() || !(event.getTarget() instanceof Player) || !(event.getEntity() instanceof Creature) )
+		if (event.isCancelled() || !(event.getTarget() instanceof Player) || !(event.getEntity() instanceof Creature) || !Config.isTargetTriggersCombat() )
 			return;
 
 		Player player = (Player) event.getTarget();
