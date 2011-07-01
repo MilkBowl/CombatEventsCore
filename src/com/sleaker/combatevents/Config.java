@@ -11,13 +11,16 @@ import org.bukkit.util.config.Configuration;
 public class Config {
 	private static Logger log = Logger.getLogger("Minecraft");
 
+	private static Configuration config;
 	//Time in seconds to tag a player as 'in-combat'
 	private static int combatTime = 10;
-	private static Configuration config;
+	private static double targetTriggerRange = 20;
 	//Whether pets should toggle combat or not
 	private static boolean petTriggersCombat = true;
 	private static boolean targetTriggersCombat = true;
+	
 	private static Set<String> denyCommands = new HashSet<String>();
+	
 	private static String denyCommandMessage = "You can not use that command while in combat!";
 	private static String leaveCombatMessage = "You have left combat!";
 	private static String enterCombatMessage = "You have entered combat!";
@@ -48,6 +51,7 @@ public class Config {
 			config.setProperty("target-triggers-combat", targetTriggersCombat);
 			config.setProperty("combat-time", combatTime);
 			config.setProperty("disabled-commands", null);
+			config.setProperty("target-trigger-range", targetTriggerRange);
 			//Default Messages
 			config.setProperty("messages.deny-command", denyCommandMessage);
 			config.setProperty("messages.enter-combat", enterCombatMessage);
@@ -58,6 +62,7 @@ public class Config {
 		targetTriggersCombat = config.getBoolean("target-triggers-combat", targetTriggersCombat);
 		combatTime = config.getInt("combat-time", combatTime);
 		denyCommands.addAll(config.getStringList("disabled-commands", null));
+		targetTriggerRange = config.getDouble("target-trigger-range", targetTriggerRange);
 		//Load the messages
 		denyCommandMessage = config.getString("messages.deny-command", denyCommandMessage);
 		enterCombatMessage = config.getString("messages.enter-combat", enterCombatMessage);
@@ -108,6 +113,10 @@ public class Config {
 
 	public static boolean isTargetTriggersCombat() {
 		return targetTriggersCombat;
+	}
+	
+	public static double getTargetTriggerRange() {
+		return targetTriggerRange;
 	}
 
 }

@@ -36,7 +36,7 @@ public class CombatEntityListener extends EntityListener {
 		Creature cEntity = (Creature) event.getEntity();
 		//If this target is a Player and within the proper distance fire our EnterCombatEvent
 		//TODO: Configure option to set Target Distance knocking a player in combat
-		if (Utility.getDistance(player.getLocation(), cEntity.getLocation()) <= 20) {
+		if (Utility.getDistance(player.getLocation(), cEntity.getLocation()) <= Config.getTargetTriggerRange()) {
 			plugin.getServer().getPluginManager().callEvent(new PlayerEnterCombatEvent(player, CombatReason.TARGETED_BY_MOB));
 			plugin.enterCombat(player, new CombatPlayer(player, CombatReason.TARGETED_BY_MOB, plugin));
 		}
