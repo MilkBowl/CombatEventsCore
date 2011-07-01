@@ -1,4 +1,6 @@
-package com.sleaker.combatevents;
+package net.milkbowl.combatevents;
+
+import net.milkbowl.combatevents.events.PlayerLeaveCombatEvent;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -6,8 +8,7 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import com.sleaker.combatevents.CombatEventsCore.LeaveCombatReason;
-import com.sleaker.combatevents.events.PlayerLeaveCombatEvent;
+import net.milkbowl.combatevents.CombatEventsCore.LeaveCombatReason;
 
 public class CombatPlayerListener extends PlayerListener {
 	CombatEventsCore plugin;

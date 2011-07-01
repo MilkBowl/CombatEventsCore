@@ -1,5 +1,5 @@
 name: CombatEventsCore
-main: com.sleaker.combatevents.CombatEventsCore
+main: net.milkbowl.combatevents.CombatEventsCore
 version: 1.0
 author: Sleaker
 description: >

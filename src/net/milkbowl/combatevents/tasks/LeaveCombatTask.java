@@ -1,11 +1,11 @@
-package com.sleaker.combatevents.tasks;
+package net.milkbowl.combatevents.tasks;
 
 import java.util.concurrent.Future;
 
 import org.bukkit.entity.Player;
 
-import com.sleaker.combatevents.CombatEventsCore;
-import com.sleaker.combatevents.CombatEventsCore.LeaveCombatReason;
+import net.milkbowl.combatevents.CombatEventsCore;
+import net.milkbowl.combatevents.CombatEventsCore.LeaveCombatReason;
 
 public class LeaveCombatTask implements Runnable {
 	Player player;

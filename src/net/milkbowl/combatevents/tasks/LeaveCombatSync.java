@@ -1,12 +1,13 @@
-package com.sleaker.combatevents.tasks;
+package net.milkbowl.combatevents.tasks;
 
 import java.util.concurrent.Callable;
 
+import net.milkbowl.combatevents.events.PlayerLeaveCombatEvent;
+
 import org.bukkit.entity.Player;
 
-import com.sleaker.combatevents.CombatEventsCore;
-import com.sleaker.combatevents.CombatEventsCore.LeaveCombatReason;
-import com.sleaker.combatevents.events.PlayerLeaveCombatEvent;
+import net.milkbowl.combatevents.CombatEventsCore;
+import net.milkbowl.combatevents.CombatEventsCore.LeaveCombatReason;
 
 public class LeaveCombatSync implements Callable<Boolean> {
 

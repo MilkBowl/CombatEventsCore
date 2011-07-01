@@ -1,6 +1,9 @@
-package com.sleaker.combatevents;
+package net.milkbowl.combatevents;
 
 import net.milkbowl.administrate.AdminHandler;
+import net.milkbowl.combatevents.events.EntityKilledByEntityEvent;
+import net.milkbowl.combatevents.events.PlayerEnterCombatEvent;
+import net.milkbowl.combatevents.events.PlayerLeaveCombatEvent;
 
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
@@ -14,11 +17,8 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityTargetEvent;
 
-import com.sleaker.combatevents.CombatEventsCore.CombatReason;
-import com.sleaker.combatevents.CombatEventsCore.LeaveCombatReason;
-import com.sleaker.combatevents.events.EntityKilledByEntityEvent;
-import com.sleaker.combatevents.events.PlayerEnterCombatEvent;
-import com.sleaker.combatevents.events.PlayerLeaveCombatEvent;
+import net.milkbowl.combatevents.CombatEventsCore.CombatReason;
+import net.milkbowl.combatevents.CombatEventsCore.LeaveCombatReason;
 
 public class CombatEntityListener extends EntityListener {
 

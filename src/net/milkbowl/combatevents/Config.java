@@ -1,4 +1,4 @@
-package com.sleaker.combatevents;
+package net.milkbowl.combatevents;
 
 import java.io.File;
 import java.io.IOException;

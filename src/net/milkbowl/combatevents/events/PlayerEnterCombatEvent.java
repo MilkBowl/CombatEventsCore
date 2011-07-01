@@ -1,9 +1,9 @@
-package com.sleaker.combatevents.events;
+package net.milkbowl.combatevents.events;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
-import com.sleaker.combatevents.CombatEventsCore.CombatReason;
+import net.milkbowl.combatevents.CombatEventsCore.CombatReason;
 
 
 @SuppressWarnings("serial")

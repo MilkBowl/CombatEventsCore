@@ -1,4 +1,4 @@
-package com.sleaker.combatevents.events;
+package net.milkbowl.combatevents.events;
 
 import java.util.List;
 

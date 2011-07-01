@@ -1,11 +1,12 @@
-package com.sleaker.combatevents;
+package net.milkbowl.combatevents;
+
+import net.milkbowl.combatevents.tasks.LeaveCombatTask;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.sleaker.combatevents.CombatEventsCore.CombatReason;
-import com.sleaker.combatevents.CombatEventsCore.LeaveCombatReason;
-import com.sleaker.combatevents.tasks.LeaveCombatTask;
+import net.milkbowl.combatevents.CombatEventsCore.CombatReason;
+import net.milkbowl.combatevents.CombatEventsCore.LeaveCombatReason;
 
 public class CombatPlayer {
 	private Player player;

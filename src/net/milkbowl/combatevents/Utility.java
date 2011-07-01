@@ -1,4 +1,4 @@
-package com.sleaker.combatevents;
+package net.milkbowl.combatevents;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

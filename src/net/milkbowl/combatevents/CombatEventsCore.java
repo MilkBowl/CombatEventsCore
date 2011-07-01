@@ -1,4 +1,4 @@
-package com.sleaker.combatevents;
+package net.milkbowl.combatevents;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import net.milkbowl.administrate.AdminHandler;
 import net.milkbowl.administrate.Administrate;
+import net.milkbowl.combatevents.tasks.LeaveCombatTask;
 
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -15,7 +16,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.sleaker.combatevents.tasks.LeaveCombatTask;
 
 public class CombatEventsCore extends JavaPlugin {
 	private static Logger log = Logger.getLogger("Minecraft");

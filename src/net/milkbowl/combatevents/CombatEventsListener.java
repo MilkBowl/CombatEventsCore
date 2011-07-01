@@ -1,12 +1,13 @@
-package com.sleaker.combatevents;
+package net.milkbowl.combatevents;
+
+import net.milkbowl.combatevents.events.EntityKilledByEntityEvent;
+import net.milkbowl.combatevents.events.PlayerEnterCombatEvent;
+import net.milkbowl.combatevents.events.PlayerLeaveCombatEvent;
 
 import org.bukkit.event.CustomEventListener;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 
-import com.sleaker.combatevents.events.EntityKilledByEntityEvent;
-import com.sleaker.combatevents.events.PlayerEnterCombatEvent;
-import com.sleaker.combatevents.events.PlayerLeaveCombatEvent;
 
 public class CombatEventsListener extends CustomEventListener implements Listener {
 
