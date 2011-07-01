@@ -52,7 +52,7 @@ public class CombatEntityListener extends EntityListener {
 
 		//Convert the entity.
 		LivingEntity cEntity = (LivingEntity) event.getEntity();
-		
+
 		//Reasons to pop us into combat
 		CombatReason reason = null;
 		Player player = null;

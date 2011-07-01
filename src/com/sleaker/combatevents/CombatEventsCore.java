@@ -23,7 +23,7 @@ public class CombatEventsCore extends JavaPlugin {
 	private CombatPlayerListener playerListener = new CombatPlayerListener(this);
 	public AdminHandler admins = null;
 
-	private static Map<LivingEntity, LivingEntity> killMap = new ConcurrentHashMap<LivingEntity, LivingEntity>();
+	private static Map<LivingEntity, LivingEntity> killMap =  new ConcurrentHashMap<LivingEntity, LivingEntity>();
 	private static Map<String, CombatPlayer> inCombat = new ConcurrentHashMap<String, CombatPlayer>();
 	String plugName = "[CombatEvents]";
 
@@ -102,7 +102,7 @@ public class CombatEventsCore extends JavaPlugin {
 	 * 
 	 */
 	public void enterCombat(Player player, CombatPlayer cPlayer) {
-		if (!inCombat.containsKey(player)) {
+		if (inCombat.isEmpty() || !inCombat.containsKey(player.getName())) {
 			inCombat.put(player.getName(), cPlayer);
 			player.sendMessage(Config.getEnterCombatMessage());
 		} else {
@@ -133,27 +133,23 @@ public class CombatEventsCore extends JavaPlugin {
 		return inCombat.get(player.getName());
 	}
 
-	public boolean isInCombat(String player) {
-		return inCombat.containsKey(player);
+	public boolean isInCombat(Player player) {
+		return inCombat.containsKey(player.getName());
 	}
 
-	public boolean isInCombat(Player player) {
-		return isInCombat(player.getName());
-	}
-	
 	public int getCombatTask(Player player) {
-		return inCombat.get(player).getTaskId();
+		return inCombat.get(player.getName()).getTaskId();
 	}
-	
+
 	public void setCombatTask(Player player, int taskId) {
-		inCombat.get(player).setTaskId(taskId);
+		inCombat.get(player.getName()).setTaskId(taskId);
 	}
-	
+
 	public void setCombatReason(Player player, CombatReason reason) {
-		inCombat.get(player).setReason(reason);
+		inCombat.get(player.getName()).setReason(reason);
 	}
-	
+
 	public CombatReason getCombatReason (Player player) {
-		return inCombat.get(player).getReason();
+		return inCombat.get(player.getName()).getReason();
 	}
 }

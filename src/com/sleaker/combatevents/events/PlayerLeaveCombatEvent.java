@@ -11,7 +11,7 @@ public class PlayerLeaveCombatEvent extends Event implements Cancellable {
 	private boolean cancel = false;
 	Player player;
 	LeaveCombatReason reason;
-	
+
 	public PlayerLeaveCombatEvent(Player player, LeaveCombatReason reason) {
 		super("PlayerLeaveCombatEvent");
 		this.player = player;

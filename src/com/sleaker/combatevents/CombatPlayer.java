@@ -20,7 +20,7 @@ public class CombatPlayer {
 		//if we create a new object always force the player into combat so make a new scheduler for leaving combat
 		taskId = plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new LeaveCombatTask(player, LeaveCombatReason.TIMED, plugin), Config.getCombatTime() * 20);
 	}
-	
+
 	public CombatReason getReason() {
 		return reason;
 	}

@@ -8,10 +8,10 @@ import com.sleaker.combatevents.CombatEventsCore.CombatReason;
 
 @SuppressWarnings("serial")
 public class PlayerEnterCombatEvent extends Event {
-	
+
 	private Player player;
 	private CombatReason reason;
-	
+
 	public PlayerEnterCombatEvent(Player player, CombatReason reason) {
 		super("PlayerEnterCombatEvent");
 		this.player = player;
@@ -21,7 +21,7 @@ public class PlayerEnterCombatEvent extends Event {
 	public Player getPlayer() {
 		return player;
 	}
-	
+
 	public CombatReason getReason() {
 		return this.reason;
 	}

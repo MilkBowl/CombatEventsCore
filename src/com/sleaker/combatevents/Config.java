@@ -10,7 +10,7 @@ import org.bukkit.util.config.Configuration;
 
 public class Config {
 	private static Logger log = Logger.getLogger("Minecraft");
-	
+
 	//Time in seconds to tag a player as 'in-combat'
 	private static int combatTime = 10;
 	private static Configuration config;
@@ -21,7 +21,7 @@ public class Config {
 	private static String denyCommandMessage = "You can not use that command while in combat!";
 	private static String leaveCombatMessage = "You have left combat!";
 	private static String enterCombatMessage = "You have entered combat!";
-	
+
 	/**
 	 * Initialize the Configuration from file
 	 * 
@@ -40,7 +40,7 @@ public class Config {
 				log.info(plugin.plugName + " - Cannot create configuration file. And none to load, using defaults.");
 			}
 		}   
-		
+
 		config = plugin.getConfiguration();
 		if (config.getKeys(null).isEmpty()) {
 			//Default Options
@@ -62,10 +62,10 @@ public class Config {
 		denyCommandMessage = config.getString("messages.deny-command", denyCommandMessage);
 		enterCombatMessage = config.getString("messages.enter-combat", enterCombatMessage);
 		leaveCombatMessage = config.getString("messages.leave-combat", leaveCombatMessage);
-		
+
 		config.save();
 	}
-	
+
 	public static int getCombatTime() {
 		return combatTime;
 	}
@@ -78,11 +78,11 @@ public class Config {
 	public static void setPetTriggersCombat(boolean petTriggersCombat) {
 		Config.petTriggersCombat = petTriggersCombat;
 	}
-	
+
 	public static void addDeniedCommand(String command) {
 		Config.denyCommands.add(command);
 	}
-	
+
 	public static void removeDeniedCommand(String command) {
 		Config.denyCommands.remove(command);
 	}
@@ -97,7 +97,7 @@ public class Config {
 	public static String getDenyCommandMessage() {
 		return denyCommandMessage;
 	}
-	
+
 	public static String getLeaveCombatMessage() {
 		return leaveCombatMessage;
 	}

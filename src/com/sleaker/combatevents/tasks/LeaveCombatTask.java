@@ -11,13 +11,13 @@ public class LeaveCombatTask implements Runnable {
 	Player player;
 	CombatEventsCore plugin;
 	LeaveCombatReason reason;
-	
+
 	public LeaveCombatTask(Player player, LeaveCombatReason reason, CombatEventsCore plugin) {
 		this.plugin = plugin;
 		this.player = player;
 		this.reason = reason;
 	}
-	
+
 	@Override
 	public void run() {
 		if (plugin.isInCombat(player)) {
@@ -26,12 +26,12 @@ public class LeaveCombatTask implements Runnable {
 				if (!cancel.get())
 					return;
 				else {
-					
+
 					//TODO: Player was not allowed to leave combat so we need to re-create a new task to force them to try leaving combat again.
-					
+
 				}
 			} catch (Exception e) {
-				
+
 			}
 		}
 	}

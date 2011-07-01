@@ -19,7 +19,7 @@ public class CombatPlayerListener extends PlayerListener {
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
 		if (event.isCancelled() || Config.getDenyCommands().isEmpty())
 			return;
-		
+
 		String message = event.getMessage();
 		for (String cmd : Config.getDenyCommands()) {
 			if (message.startsWith("/" + cmd)) {
@@ -29,7 +29,7 @@ public class CombatPlayerListener extends PlayerListener {
 			}
 		}
 	}
-	
+
 	public void onPlayerQuit (PlayerQuitEvent event) { 
 		//Cleanup the player if they are kicked.
 		if (plugin.isInCombat(event.getPlayer())) {
@@ -43,7 +43,7 @@ public class CombatPlayerListener extends PlayerListener {
 			if (throwPlayerLeaveCombatEvent(event.getPlayer(), LeaveCombatReason.KICK))
 				plugin.leaveCombat(event.getPlayer());
 	}
-	
+
 	private boolean throwPlayerLeaveCombatEvent(Player player, LeaveCombatReason reason) {
 		PlayerLeaveCombatEvent event = new PlayerLeaveCombatEvent(player, reason);
 		plugin.getServer().getPluginManager().callEvent(event);

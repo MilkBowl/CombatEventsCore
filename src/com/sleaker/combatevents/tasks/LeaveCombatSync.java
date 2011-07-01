@@ -5,7 +5,6 @@ import java.util.concurrent.Callable;
 import org.bukkit.entity.Player;
 
 import com.sleaker.combatevents.CombatEventsCore;
-import com.sleaker.combatevents.Config;
 import com.sleaker.combatevents.CombatEventsCore.LeaveCombatReason;
 import com.sleaker.combatevents.events.PlayerLeaveCombatEvent;
 
@@ -25,10 +24,9 @@ public class LeaveCombatSync implements Callable<Boolean> {
 	public Boolean call() throws Exception {
 		PlayerLeaveCombatEvent event = new PlayerLeaveCombatEvent(player, reason);
 		plugin.getServer().getPluginManager().callEvent(event);
-		if (!event.isCancelled()) {
+		if (!event.isCancelled()) 
 			plugin.leaveCombat(player);
-			player.sendMessage(Config.getLeaveCombatMessage());
-		} 
+
 		return event.isCancelled();
 	}
 }
