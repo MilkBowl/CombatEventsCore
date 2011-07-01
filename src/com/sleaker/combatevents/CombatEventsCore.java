@@ -123,15 +123,14 @@ public class CombatEventsCore extends JavaPlugin {
 	 */
 	public CombatPlayer leaveCombat(Player player) {
 		player.sendMessage(Config.getLeaveCombatMessage());
+		//Cancel the task
+		if (this.getServer().getScheduler().isQueued(getCombatTask(player)))
+			this.getServer().getScheduler().cancelTask(getCombatTask(player));
 		return inCombat.remove(player.getName());
 	}
 
-	public CombatPlayer getCombatPlayer(String player) {
-		return inCombat.get(player);
-	}
-
 	public CombatPlayer getCombatPlayer (Player player) {
-		return getCombatPlayer(player.getName());
+		return inCombat.get(player.getName());
 	}
 
 	public boolean isInCombat(String player) {
