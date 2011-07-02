@@ -37,7 +37,12 @@ public class CombatEventsCore extends JavaPlugin {
 	public enum LeaveCombatReason {
 		QUIT, KICK, ERROR, TIMED, DEATH, CUSTOM
 	}
-
+	
+	@Override
+	public void onLoad() {
+		Config.initialize(this);
+	}
+	
 	@Override
 	public void onDisable() {
 		log.info(plugName + " - v" + this.getDescription().getVersion() + " disabled!");
@@ -45,8 +50,6 @@ public class CombatEventsCore extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-
-		Config.initialize(this);
 
 		PluginManager pm = this.getServer().getPluginManager();
 		pm.registerEvent(Event.Type.ENTITY_TARGET, entityListener, Priority.Monitor, this);
@@ -59,7 +62,6 @@ public class CombatEventsCore extends JavaPlugin {
 		//setup our optional dependencies
 		setupOptionals();
 		log.info(plugName + " - v" + this.getDescription().getVersion() + " enabled!");
-
 	}
 
 	private void setupOptionals() {
