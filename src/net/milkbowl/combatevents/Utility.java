@@ -27,7 +27,7 @@ public class Utility {
 		return Math.sqrt(xDistSq + yDistSq + zDistSq);
 	}
 	
-	public CreatureType getCType(LivingEntity cEntity) {
+	public static CreatureType getCType(LivingEntity cEntity) {
 		if (cEntity instanceof Chicken)
 			return CreatureType.CHICKEN;
 		else if (cEntity instanceof Cow)
