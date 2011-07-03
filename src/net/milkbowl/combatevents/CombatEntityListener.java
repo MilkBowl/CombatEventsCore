@@ -119,6 +119,7 @@ public class CombatEntityListener extends EntityListener {
 		 * 
 		 * We need store store a Map of all entities we are in combat with and the associated reason why we
 		 * entered combat to begin with, not continually update that we are in combat over and over.
+		 * Basically if you enter combat with something, that specific combat reason should not change.
 		 */
 		if (reason != null && player != null) {
 			plugin.enterCombat(player, new CombatPlayer(player, reason, rEntity, plugin), rEntity, reason);
@@ -128,7 +129,12 @@ public class CombatEntityListener extends EntityListener {
 			}
 		}
 
-		//Lets only Log this event if it's going to kill the attacked
+		
+		/**
+		 * Get ready to call our EntityKilledByEntityEvent for this entity
+		 * and the entity to the kill map
+		 * 
+		 */
 		if (cEntity.getHealth() - event.getDamage() <= 0 ) {
 			if (event instanceof EntityDamageByEntityEvent) {
 				EntityDamageByEntityEvent thisEvent = (EntityDamageByEntityEvent) event;
@@ -165,7 +171,11 @@ public class CombatEntityListener extends EntityListener {
 
 		LivingEntity cEntity = (LivingEntity) event.getEntity();
 
-		//If this is a player remove them from Combat
+		/**
+		 * If this is a player, lets run our checks and remove them from combat with any other
+		 * players.
+		 * 
+		 */
 		if (cEntity instanceof Player) {
 			Player player = (Player) cEntity;
 			//Check 
@@ -191,16 +201,51 @@ public class CombatEntityListener extends EntityListener {
 				plugin.getServer().getScheduler().cancelTask(plugin.getCombatTask(player));
 			plugin.leaveCombat(player);	
 			player.sendMessage(Config.getLeaveCombatMessage());
-			
+		} 
+		/**
+		 * if a player didn't die lets run a check and remove the entity from any other player
+		 * combat maps.
+		 */
+		else {
+			for ( Player p : plugin.getServer().getOnlinePlayers() ) {
+				Iterator<Entity> iter = plugin.getCombatPlayer(p).getReasons().keySet().iterator();
+				while (iter.hasNext()) {
+					Entity entity = iter.next();
+					if (entity.equals(cEntity)) {
+						iter.remove();
+						break;
+					}
+				}
+				/**
+				 *  After we removed the entity, lets kick the player out of combat if
+				 *  they have no more reasons to be in combat
+				 */
+				if (plugin.getCombatPlayer(p).getReasons().isEmpty()) {
+					//If the mapping is empty lets leave combat.
+					if (throwPlayerLeaveCombatEvent(p, LeaveCombatReason.TARGET_DIED))
+						plugin.getServer().getScheduler().cancelTask(plugin.getCombatTask(p));
+					
+					plugin.leaveCombat(p);
+					p.sendMessage(Config.getLeaveCombatMessage());
+				}
+			}
 		}
 
-		//Fire our event if the entity dying is in the killMap
+		/**
+		 * Removes the dying entity from the KillMap if they are in it
+		 * and fires the appropriate event.
+		 * 
+		 * This new Event WILL override the EntityKilled events drops if
+		 * the drops are changed in the sub-event
+		 * 
+		 */
 		if ( plugin.getAttacker(cEntity) != null ) {
 			EntityKilledByEntityEvent kEvent = new EntityKilledByEntityEvent(plugin.getAttacker(cEntity), cEntity, event.getDrops());
 			plugin.getServer().getPluginManager().callEvent(kEvent);
-			//Reset our drops.
+			//Reset the super events drops to the subevents drops.
 			event.getDrops().clear();
 			event.getDrops().addAll(kEvent.getDrops());
+			//Remove the entity from the kill map
 			plugin.removeKilled(cEntity);
 		}
 
