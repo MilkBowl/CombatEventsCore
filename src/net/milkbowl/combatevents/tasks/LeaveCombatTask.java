@@ -26,9 +26,8 @@ public class LeaveCombatTask implements Runnable {
 				if (!cancel.get())
 					return;
 				else {
-
-					//TODO: Player was not allowed to leave combat so we need to re-create a new task to force them to try leaving combat again.
-
+					//Player was not allowed to leave combat so we need to re-create a new task to force them to try leaving combat again.
+					plugin.getCombatPlayer(player).setTaskId(plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new LeaveCombatTask(player, LeaveCombatReason.TIMED, plugin), 20));
 				}
 			} catch (Exception e) {
 

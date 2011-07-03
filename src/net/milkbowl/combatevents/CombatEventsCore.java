@@ -8,6 +8,7 @@ import net.milkbowl.administrate.AdminHandler;
 import net.milkbowl.administrate.Administrate;
 import net.milkbowl.combatevents.tasks.LeaveCombatTask;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -35,7 +36,7 @@ public class CombatEventsCore extends JavaPlugin {
 	}
 
 	public enum LeaveCombatReason {
-		QUIT, KICK, ERROR, TIMED, DEATH, CUSTOM
+		QUIT, KICK, ERROR, TIMED, DEATH, TARGET_DIED, CUSTOM
 	}
 	
 	@Override
@@ -100,19 +101,25 @@ public class CombatEventsCore extends JavaPlugin {
 	/**
 	 * Add the player to the inCombat mapping with necessary info
 	 * If the player is already in-combat and we are re-adding them
-	 * only reset
+	 * only reset the time and their inventory, not their initial reason, unless it's a new one
 	 * 
 	 */
-	public void enterCombat(Player player, CombatPlayer cPlayer) {
+	public void enterCombat(Player player, CombatPlayer cPlayer, Entity entity, CombatReason reason) {
 		if (inCombat.isEmpty() || !inCombat.containsKey(player.getName())) {
 			inCombat.put(player.getName(), cPlayer);
 			player.sendMessage(Config.getEnterCombatMessage());
-		} else {
-			//Create the task for leaving combat
+		} else if (inCombat.get(player.getName()).getReason(entity) == null){
+			//Add a new reason and remake the task for leaving combat
 			LeaveCombatTask leaveTask = new LeaveCombatTask(player, LeaveCombatReason.TIMED, this);
 			CombatPlayer thisCPlayer = inCombat.get(player.getName());
 			thisCPlayer.setInventory(cPlayer.getInventory());
-			thisCPlayer.setReason(cPlayer.getReason());
+			thisCPlayer.addReason(entity, reason);
+			thisCPlayer.setTaskId(getServer().getScheduler().scheduleAsyncDelayedTask(this, leaveTask, Config.getCombatTime() * 20));
+		} else {
+			//Since this entity is already in the map lets just refresh their inventory and the timer
+			LeaveCombatTask leaveTask = new LeaveCombatTask(player, LeaveCombatReason.TIMED, this);
+			CombatPlayer thisCPlayer = inCombat.get(player.getName());
+			thisCPlayer.setInventory(cPlayer.getInventory());
 			thisCPlayer.setTaskId(getServer().getScheduler().scheduleAsyncDelayedTask(this, leaveTask, Config.getCombatTime() * 20));
 		}
 	}
@@ -147,11 +154,11 @@ public class CombatEventsCore extends JavaPlugin {
 		inCombat.get(player.getName()).setTaskId(taskId);
 	}
 
-	public void setCombatReason(Player player, CombatReason reason) {
-		inCombat.get(player.getName()).setReason(reason);
+	public void setCombatReason(Player player, Entity entity, CombatReason reason) {
+		inCombat.get(player.getName()).addReason(entity, reason);
 	}
 
-	public CombatReason getCombatReason (Player player) {
-		return inCombat.get(player.getName()).getReason();
+	public CombatReason getCombatReason (Player player, Entity entity) {
+		return inCombat.get(player.getName()).getReason(entity);
 	}
 }

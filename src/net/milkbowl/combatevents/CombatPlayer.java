@@ -1,7 +1,11 @@
 package net.milkbowl.combatevents;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.milkbowl.combatevents.tasks.LeaveCombatTask;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -10,26 +14,38 @@ import net.milkbowl.combatevents.CombatEventsCore.LeaveCombatReason;
 
 public class CombatPlayer {
 	private Player player;
-	private CombatReason reason;
+	private Map<Entity, CombatReason> reasons = new HashMap<Entity, CombatReason>(2);
 	private ItemStack[] inventory;
 	private int taskId;
 
-	CombatPlayer(Player player, CombatReason reason, CombatEventsCore plugin) {
+	CombatPlayer(Player player, CombatReason reason, Entity entity,CombatEventsCore plugin) {
 		this.player = player;
 		this.inventory = player.getInventory().getContents();
-		this.reason = reason;
+		reasons.put(entity, reason);
 		//if we create a new object always force the player into combat so make a new scheduler for leaving combat
 		taskId = plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new LeaveCombatTask(player, LeaveCombatReason.TIMED, plugin), Config.getCombatTime() * 20);
 	}
 
-	public CombatReason getReason() {
-		return reason;
+	public Map<Entity, CombatReason> getReasons() {
+		return reasons;
 	}
 
-	public void setReason(CombatReason reason) {
-		this.reason = reason;
+	public void addReason(Entity entity, CombatReason reason) {
+		this.reasons.put(entity, reason);
+	}
+	
+	public CombatReason getReason(Entity entity) {
+		return this.reasons.get(entity);
 	}
 
+	public void removeReason(Entity entity) {
+		this.reasons.remove(entity);
+	}
+	
+	public void clearReasons() {
+		this.reasons.clear();
+	}
+	
 	public ItemStack[] getInventory() {
 		return inventory;
 	}
