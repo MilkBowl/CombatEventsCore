@@ -26,7 +26,7 @@ public class Utility {
 		double zDistSq = Math.pow(loc1.getZ() - loc2.getZ(), 2);
 		return Math.sqrt(xDistSq + yDistSq + zDistSq);
 	}
-	
+
 	public static CreatureType getCType(LivingEntity cEntity) {
 		if (cEntity instanceof Chicken)
 			return CreatureType.CHICKEN;
@@ -58,5 +58,12 @@ public class Utility {
 			return CreatureType.ZOMBIE;
 		else
 			return null;
+	}
+
+	public static boolean isMonster(CreatureType cType) {
+		if (cType.equals(CreatureType.CREEPER) || cType.equals(CreatureType.GHAST) || cType.equals(CreatureType.GIANT) || cType.equals(CreatureType.PIG_ZOMBIE) || cType.equals(CreatureType.SKELETON) || cType.equals(CreatureType.ZOMBIE) )
+			return true;
+		else
+			return false;
 	}
 }
