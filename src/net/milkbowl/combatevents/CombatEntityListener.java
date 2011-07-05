@@ -25,7 +25,6 @@ import net.milkbowl.combatevents.CombatEventsCore.LeaveCombatReason;
 public class CombatEntityListener extends EntityListener {
 
 	private CombatEventsCore plugin;
-
 	CombatEntityListener(CombatEventsCore plugin) {
 		this.plugin = plugin;
 	}
@@ -37,7 +36,6 @@ public class CombatEntityListener extends EntityListener {
 		Player player = (Player) event.getTarget();
 		Creature cEntity = (Creature) event.getEntity();
 		//If this target is a Player and within the proper distance fire our EnterCombatEvent
-		//TODO: Configure option to set Target Distance knocking a player in combat
 		if (Utility.getDistance(player.getLocation(), cEntity.getLocation()) <= Config.getTargetTriggerRange()) {
 			plugin.getServer().getPluginManager().callEvent(new PlayerEnterCombatEvent(player, CombatReason.TARGETED_BY_MOB));
 			plugin.enterCombat(player, new CombatPlayer(player, CombatReason.TARGETED_BY_MOB, cEntity, plugin), cEntity, CombatReason.TARGETED_BY_MOB);
@@ -122,7 +120,9 @@ public class CombatEntityListener extends EntityListener {
 		 * Basically if you enter combat with something, that specific combat reason should not change.
 		 */
 		if (reason != null && player != null) {
-			plugin.enterCombat(player, new CombatPlayer(player, reason, rEntity, plugin), rEntity, reason);
+			CombatPlayer cPlayer = new CombatPlayer(player, reason, rEntity, plugin);
+			plugin.enterCombat(player, cPlayer, rEntity, reason);
+			
 			//If this is a PvP event lets tag the other player as in-combat or update their times
 			if (reason.equals(CombatReason.DAMAGED_BY_PLAYER)) {
 				plugin.enterCombat(pvpPlayer, new CombatPlayer(pvpPlayer, CombatReason.ATTACKED_PLAYER, rEntity, plugin), player, CombatReason.ATTACKED_PLAYER);
@@ -170,7 +170,27 @@ public class CombatEntityListener extends EntityListener {
 			return;
 
 		LivingEntity cEntity = (LivingEntity) event.getEntity();
-
+		
+		/**
+		 * Removes the dying entity from the KillMap if they are in it
+		 * and fires the appropriate event.
+		 * 
+		 * This new Event WILL override the EntityKilled events drops if
+		 * the drops are changed in the sub-event
+		 * 
+		 */
+		if ( plugin.getAttacker(cEntity) != null ) {
+			EntityKilledByEntityEvent kEvent = new EntityKilledByEntityEvent(plugin.getAttacker(cEntity), cEntity, event.getDrops());
+			plugin.getServer().getPluginManager().callEvent(kEvent);
+			//Reset the super events drops to the subevents drops.
+			event.getDrops().clear();
+			event.getDrops().addAll(kEvent.getDrops());
+			//Remove the entity from the kill map
+			plugin.removeKilled(cEntity);
+		} else {
+			return;
+		}
+		
 		/**
 		 * If this is a player, lets run our checks and remove them from combat with any other
 		 * players.
@@ -208,6 +228,8 @@ public class CombatEntityListener extends EntityListener {
 		 */
 		else {
 			for ( Player p : plugin.getServer().getOnlinePlayers() ) {
+				if (plugin.getCombatPlayer(p) == null)
+					continue;
 				Iterator<Entity> iter = plugin.getCombatPlayer(p).getReasons().keySet().iterator();
 				while (iter.hasNext()) {
 					Entity entity = iter.next();
@@ -230,25 +252,6 @@ public class CombatEntityListener extends EntityListener {
 				}
 			}
 		}
-
-		/**
-		 * Removes the dying entity from the KillMap if they are in it
-		 * and fires the appropriate event.
-		 * 
-		 * This new Event WILL override the EntityKilled events drops if
-		 * the drops are changed in the sub-event
-		 * 
-		 */
-		if ( plugin.getAttacker(cEntity) != null ) {
-			EntityKilledByEntityEvent kEvent = new EntityKilledByEntityEvent(plugin.getAttacker(cEntity), cEntity, event.getDrops());
-			plugin.getServer().getPluginManager().callEvent(kEvent);
-			//Reset the super events drops to the subevents drops.
-			event.getDrops().clear();
-			event.getDrops().addAll(kEvent.getDrops());
-			//Remove the entity from the kill map
-			plugin.removeKilled(cEntity);
-		}
-
 	}
 
 	private boolean throwPlayerLeaveCombatEvent(Player player, LeaveCombatReason reason) {
