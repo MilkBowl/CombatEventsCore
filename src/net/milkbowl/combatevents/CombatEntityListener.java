@@ -211,7 +211,6 @@ public class CombatEntityListener extends EntityListener {
 							plugin.getServer().getScheduler().cancelTask(plugin.getCombatTask(p));
 						
 						plugin.leaveCombat(p);
-						p.sendMessage(Config.getLeaveCombatMessage());
 					}
 					break;
 				}
@@ -220,7 +219,6 @@ public class CombatEntityListener extends EntityListener {
 				//Cancel the task and remove the player from the combat map and send our leave combat message
 				plugin.getServer().getScheduler().cancelTask(plugin.getCombatTask(player));
 			plugin.leaveCombat(player);	
-			player.sendMessage(Config.getLeaveCombatMessage());
 		} 
 		/**
 		 * if a player didn't die lets run a check and remove the entity from any other player
