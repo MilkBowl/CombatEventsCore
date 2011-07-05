@@ -14,13 +14,14 @@ import net.milkbowl.combatevents.CombatEventsCore.LeaveCombatReason;
 
 public class CombatPlayer {
 	private Player player;
-	private Map<Entity, CombatReason> reasons = new HashMap<Entity, CombatReason>(2);
+	private Map<Entity, CombatReason> reasons;
 	private ItemStack[] inventory;
 	private int taskId;
 
-	CombatPlayer(Player player, CombatReason reason, Entity entity,CombatEventsCore plugin) {
+	CombatPlayer(Player player, CombatReason reason, Entity entity, CombatEventsCore plugin) {
 		this.player = player;
 		this.inventory = player.getInventory().getContents();
+		reasons = new HashMap<Entity, CombatReason>(2);
 		reasons.put(entity, reason);
 		//if we create a new object always force the player into combat so make a new scheduler for leaving combat
 		taskId = plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new LeaveCombatTask(player, LeaveCombatReason.TIMED, plugin), Config.getCombatTime() * 20);

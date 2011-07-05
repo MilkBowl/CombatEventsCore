@@ -1,7 +1,8 @@
 package net.milkbowl.combatevents;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import net.milkbowl.administrate.AdminHandler;
@@ -24,8 +25,8 @@ public class CombatEventsCore extends JavaPlugin {
 	private CombatPlayerListener playerListener = new CombatPlayerListener(this);
 	public AdminHandler admins = null;
 
-	private static Map<LivingEntity, LivingEntity> killMap =  new ConcurrentHashMap<LivingEntity, LivingEntity>();
-	private static Map<String, CombatPlayer> inCombat = new ConcurrentHashMap<String, CombatPlayer>();
+	private static Map<LivingEntity, LivingEntity> killMap =  Collections.synchronizedMap(new HashMap<LivingEntity, LivingEntity>());
+	private static Map<String, CombatPlayer> inCombat = Collections.synchronizedMap(new HashMap<String, CombatPlayer>());
 	String plugName = "[CombatEvents]";
 
 	/*
@@ -75,11 +76,18 @@ public class CombatEventsCore extends JavaPlugin {
 		} 
 	}
 
-	public LivingEntity getAttacker(LivingEntity  entity) {
+	/**
+	 * Gets an attacker from the killmap
+	 * 
+	 * 
+	 * @param entity
+	 * @return LivingEntity
+	 */
+	protected LivingEntity getAttacker(LivingEntity  entity) {
 		return killMap.get(entity);
 	}
 
-	public boolean removeKilled(LivingEntity  entity) {
+	protected boolean removeKilled(LivingEntity  entity) {
 		if (!killMap.containsKey(entity))
 			return false;
 		else
@@ -88,7 +96,7 @@ public class CombatEventsCore extends JavaPlugin {
 		return true;
 	}
 
-	public boolean addAttacker(LivingEntity killed, LivingEntity attacker) {
+	protected boolean addAttacker(LivingEntity killed, LivingEntity attacker) {
 		if (killMap.containsKey(killed))
 			return false;
 		else
@@ -105,7 +113,7 @@ public class CombatEventsCore extends JavaPlugin {
 	 * 
 	 */
 	public void enterCombat(Player player, CombatPlayer cPlayer, Entity entity, CombatReason reason) {
-		if (inCombat.isEmpty() || !inCombat.containsKey(player.getName())) {
+		if (!inCombat.containsKey(player.getName())) {
 			inCombat.put(player.getName(), cPlayer);
 			player.sendMessage(Config.getEnterCombatMessage());
 		} else if (inCombat.get(player.getName()).getReason(entity) == null){
@@ -114,12 +122,16 @@ public class CombatEventsCore extends JavaPlugin {
 			CombatPlayer thisCPlayer = inCombat.get(player.getName());
 			thisCPlayer.setInventory(cPlayer.getInventory());
 			thisCPlayer.addReason(entity, reason);
+			//Cancel our leave combat task and remake a new one
+			getServer().getScheduler().cancelTask(thisCPlayer.getTaskId());
 			thisCPlayer.setTaskId(getServer().getScheduler().scheduleAsyncDelayedTask(this, leaveTask, Config.getCombatTime() * 20));
 		} else {
 			//Since this entity is already in the map lets just refresh their inventory and the timer
 			LeaveCombatTask leaveTask = new LeaveCombatTask(player, LeaveCombatReason.TIMED, this);
 			CombatPlayer thisCPlayer = inCombat.get(player.getName());
 			thisCPlayer.setInventory(cPlayer.getInventory());
+			//Cancel our leave combat task and remake a new one
+			getServer().getScheduler().cancelTask(thisCPlayer.getTaskId());
 			thisCPlayer.setTaskId(getServer().getScheduler().scheduleAsyncDelayedTask(this, leaveTask, Config.getCombatTime() * 20));
 		}
 	}
