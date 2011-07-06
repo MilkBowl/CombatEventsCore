@@ -47,9 +47,14 @@ public class CombatEntityListener extends EntityListener {
 		if (event.isCancelled() || !isValidEntity(event.getEntity()))
 			return;
 
+		
 		//Convert the entity.
 		LivingEntity cEntity = (LivingEntity) event.getEntity();
-
+		
+		//Don't even think about trying to pop into combat against a dead entity.
+		if (cEntity.getHealth() <= 0)
+			return;
+		
 		//Reasons to pop us into combat
 		CombatReason reason = null;
 		Player player = null;
