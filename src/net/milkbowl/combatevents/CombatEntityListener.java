@@ -246,7 +246,6 @@ public class CombatEntityListener extends EntityListener {
 						plugin.getServer().getScheduler().cancelTask(plugin.getCombatTask(p));
 					
 					plugin.leaveCombat(p);
-					p.sendMessage(Config.getLeaveCombatMessage());
 				}
 			}
 		}
