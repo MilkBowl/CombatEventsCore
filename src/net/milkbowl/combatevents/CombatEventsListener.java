@@ -20,7 +20,7 @@ public class CombatEventsListener extends CustomEventListener implements Listene
 	 * 
 	 * @param event
 	 */
-	public void onEntityKilledByEntityEvent(EntityKilledByEntityEvent event) {
+	public void onEntityKilledByEntity(EntityKilledByEntityEvent event) {
 
 	}
 
@@ -29,7 +29,7 @@ public class CombatEventsListener extends CustomEventListener implements Listene
 	 * 
 	 * @param event
 	 */
-	public void onPlayerEnterCombatEvent(PlayerEnterCombatEvent event) {
+	public void onPlayerEnterCombat(PlayerEnterCombatEvent event) {
 
 	}
 
@@ -38,17 +38,17 @@ public class CombatEventsListener extends CustomEventListener implements Listene
 	 * 
 	 * @param event
 	 */
-	public void onPlayerLeaveCombatEvent(PlayerLeaveCombatEvent event) {
+	public void onPlayerLeaveCombat(PlayerLeaveCombatEvent event) {
 
 	}
 
 	public void onCustomEvent(Event event) {
 		if (event instanceof EntityKilledByEntityEvent) {
-			onEntityKilledByEntityEvent((EntityKilledByEntityEvent) event);
+			onEntityKilledByEntity((EntityKilledByEntityEvent) event);
 		} else if (event instanceof PlayerEnterCombatEvent) {
-			onPlayerEnterCombatEvent((PlayerEnterCombatEvent) event);
+			onPlayerEnterCombat((PlayerEnterCombatEvent) event);
 		} else if (event instanceof PlayerLeaveCombatEvent) {
-			onPlayerLeaveCombatEvent((PlayerLeaveCombatEvent) event);
+			onPlayerLeaveCombat((PlayerLeaveCombatEvent) event);
 		}
 	}
 }
