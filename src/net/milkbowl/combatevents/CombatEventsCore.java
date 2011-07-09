@@ -10,7 +10,6 @@ import net.milkbowl.administrate.Administrate;
 import net.milkbowl.combatevents.tasks.LeaveCombatTask;
 
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
@@ -21,12 +20,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class CombatEventsCore extends JavaPlugin {
 	private static Logger log = Logger.getLogger("Minecraft");
+	private Map<String, Camper> campMap = new HashMap<String, Camper>();
+	private Map<String, CombatPlayer> inCombat = Collections.synchronizedMap(new HashMap<String, CombatPlayer>());
+	
 	private CombatEntityListener entityListener = new CombatEntityListener(this);
 	private CombatPlayerListener playerListener = new CombatPlayerListener(this);
 	public AdminHandler admins = null;
 
-	private static Map<LivingEntity, LivingEntity> killMap =  Collections.synchronizedMap(new HashMap<LivingEntity, LivingEntity>());
-	private static Map<String, CombatPlayer> inCombat = Collections.synchronizedMap(new HashMap<String, CombatPlayer>());
 	String plugName = "[CombatEvents]";
 
 	/*
@@ -38,6 +38,10 @@ public class CombatEventsCore extends JavaPlugin {
 
 	public enum LeaveCombatReason {
 		QUIT, KICK, ERROR, TIMED, DEATH, TARGET_DIED, CUSTOM
+	}
+	
+	public enum KillType {
+		NORMAL, PROJECTILE, CAMPING, CUSTOM
 	}
 	
 	@Override
@@ -75,36 +79,6 @@ public class CombatEventsCore extends JavaPlugin {
 			}
 		} 
 	}
-
-	/**
-	 * Gets an attacker from the killmap
-	 * 
-	 * 
-	 * @param entity
-	 * @return LivingEntity
-	 */
-	protected LivingEntity getAttacker(LivingEntity  entity) {
-		return killMap.get(entity);
-	}
-
-	protected boolean removeKilled(LivingEntity  entity) {
-		if (!killMap.containsKey(entity))
-			return false;
-		else
-			killMap.remove(entity);
-
-		return true;
-	}
-
-	protected boolean addAttacker(LivingEntity killed, LivingEntity attacker) {
-		if (killMap.containsKey(killed))
-			return false;
-		else
-			killMap.put(killed, attacker);
-
-		return true;
-	}
-
 
 	/**
 	 * Add the player to the inCombat mapping with necessary info
@@ -172,5 +146,9 @@ public class CombatEventsCore extends JavaPlugin {
 
 	public CombatReason getCombatReason (Player player, Entity entity) {
 		return inCombat.get(player.getName()).getReason(entity);
+	}
+
+	public Map<String, Camper> getCampMap() {
+		return campMap;
 	}
 }

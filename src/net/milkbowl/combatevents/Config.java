@@ -24,6 +24,13 @@ public class Config {
 	private static String denyCommandMessage = "You can not use that command while in combat!";
 	private static String leaveCombatMessage = "You have left combat!";
 	private static String enterCombatMessage = "You have entered combat!";
+	private static String campMessage = "You will not get anymore rewards until you move to a new location!";
+	
+	//Camper detection settings
+	private static boolean antiCamp = true;
+	private static int campTime = 60;
+	private static int campRange = 15;
+	private static int campKills = 3;
 
 	/**
 	 * Initialize the Configuration from file
@@ -56,6 +63,13 @@ public class Config {
 			config.setProperty("messages.deny-command", denyCommandMessage);
 			config.setProperty("messages.enter-combat", enterCombatMessage);
 			config.setProperty("messages.leave-combat", leaveCombatMessage);
+			config.setProperty("messages.camp-message", campMessage);
+			//Camp settings
+			config.setProperty("camp.anti-camp-enabled", antiCamp);
+			config.setProperty("camp.timer", campTime);
+			config.setProperty("camp.range", campRange);
+			config.setProperty("camp.kills-before-trigger", campKills);
+		
 		}
 		//Load the Options
 		petTriggersCombat = config.getBoolean("pet-triggers-combat", petTriggersCombat);
@@ -67,8 +81,39 @@ public class Config {
 		denyCommandMessage = config.getString("messages.deny-command", denyCommandMessage);
 		enterCombatMessage = config.getString("messages.enter-combat", enterCombatMessage);
 		leaveCombatMessage = config.getString("messages.leave-combat", leaveCombatMessage);
-
+		campMessage = config.getString("messages.camp-message", campMessage);
+		//Load camping settings
+		antiCamp = config.getBoolean("camp.anti-camp-enabled", antiCamp);
+		campTime = config.getInt("camp.timer", campTime);
+		campRange = config.getInt("camp.range", campRange);
+		campKills = config.getInt("camp.kills-before-trigger", campKills);
+		if (campKills < 2 ) {
+			log.info("[CombatEventsCore] - camp.kills-before-trigger must be at least 2. Setting to default value.");
+			campKills = 3;
+			config.setProperty("camp.kills-before-trigger", 3);
+		}
+		
 		config.save();
+	}
+
+	public static String getCampMessage() {
+		return campMessage;
+	}
+
+	public static boolean isAntiCamp() {
+		return antiCamp;
+	}
+
+	public static int getCampTime() {
+		return campTime;
+	}
+
+	public static int getCampRange() {
+		return campRange;
+	}
+
+	public static int getCampKills() {
+		return campKills;
 	}
 
 	public static int getCombatTime() {

@@ -2,11 +2,11 @@ package net.milkbowl.combatevents;
 
 import java.util.Iterator;
 
-import net.milkbowl.administrate.AdminHandler;
 import net.milkbowl.combatevents.events.EntityKilledByEntityEvent;
 import net.milkbowl.combatevents.events.PlayerEnterCombatEvent;
 import net.milkbowl.combatevents.events.PlayerLeaveCombatEvent;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -20,6 +20,7 @@ import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import net.milkbowl.combatevents.CombatEventsCore.CombatReason;
+import net.milkbowl.combatevents.CombatEventsCore.KillType;
 import net.milkbowl.combatevents.CombatEventsCore.LeaveCombatReason;
 
 public class CombatEntityListener extends EntityListener {
@@ -47,14 +48,14 @@ public class CombatEntityListener extends EntityListener {
 		if (event.isCancelled() || !isValidEntity(event.getEntity()))
 			return;
 
-		
+
 		//Convert the entity.
 		LivingEntity cEntity = (LivingEntity) event.getEntity();
-		
+
 		//Don't even think about trying to pop into combat against a dead entity.
 		if (cEntity.getHealth() <= 0)
 			return;
-		
+
 		//Reasons to pop us into combat
 		CombatReason reason = null;
 		Player player = null;
@@ -127,46 +128,12 @@ public class CombatEntityListener extends EntityListener {
 		if (reason != null && player != null) {
 			CombatPlayer cPlayer = new CombatPlayer(player, reason, rEntity, plugin);
 			plugin.enterCombat(player, cPlayer, rEntity, reason);
-			
+
 			//If this is a PvP event lets tag the other player as in-combat or update their times
 			if (reason.equals(CombatReason.DAMAGED_BY_PLAYER)) {
 				plugin.enterCombat(pvpPlayer, new CombatPlayer(pvpPlayer, CombatReason.ATTACKED_PLAYER, rEntity, plugin), player, CombatReason.ATTACKED_PLAYER);
 			}
 		}
-
-		
-		/**
-		 * Get ready to call our EntityKilledByEntityEvent for this entity
-		 * and the entity to the kill map
-		 * 
-		 */
-		if (cEntity.getHealth() - event.getDamage() <= 0 ) {
-			if (event instanceof EntityDamageByEntityEvent) {
-				EntityDamageByEntityEvent thisEvent = (EntityDamageByEntityEvent) event;
-
-				if (thisEvent.getDamager() instanceof LivingEntity) {
-					LivingEntity attacker = (LivingEntity) thisEvent.getDamager();
-					//Check if this is a player and we have an admin plugin enabled - otherwise just add to the map
-					if (attacker instanceof Player && plugin.admins != null) {
-						if (!AdminHandler.isGod(((Player) attacker).getName()) && !AdminHandler.isInvisible(((Player) attacker).getName()))
-							plugin.addAttacker(cEntity, attacker);
-					} else 
-						plugin.addAttacker(cEntity, attacker);
-
-				}
-			} else if (event instanceof EntityDamageByProjectileEvent ){
-				EntityDamageByProjectileEvent thisEvent = (EntityDamageByProjectileEvent) event;
-				if (thisEvent.getDamager() instanceof LivingEntity) {
-					LivingEntity attacker = (LivingEntity) thisEvent.getDamager();
-					//Check if this is a player and we have an admin plugin enabled - otherwise just add to the map
-					if (attacker instanceof Player && plugin.admins != null) {
-						if (!AdminHandler.isGod(((Player) attacker).getName()) && !AdminHandler.isInvisible(((Player) attacker).getName()))
-							plugin.addAttacker(cEntity, attacker);
-					} else
-						plugin.addAttacker(cEntity, attacker);
-				}
-			}
-		}	
 	}
 
 	public void onEntityDeath (EntityDeathEvent event) {
@@ -175,7 +142,8 @@ public class CombatEntityListener extends EntityListener {
 			return;
 
 		LivingEntity cEntity = (LivingEntity) event.getEntity();
-		
+
+
 		/**
 		 * Removes the dying entity from the KillMap if they are in it
 		 * and fires the appropriate event.
@@ -184,18 +152,51 @@ public class CombatEntityListener extends EntityListener {
 		 * the drops are changed in the sub-event
 		 * 
 		 */
-		if ( plugin.getAttacker(cEntity) != null ) {
-			EntityKilledByEntityEvent kEvent = new EntityKilledByEntityEvent(plugin.getAttacker(cEntity), cEntity, event.getDrops());
+		LivingEntity attacker = null;
+		if (event.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) 
+			attacker = (LivingEntity) ((EntityDamageByEntityEvent) event.getEntity().getLastDamageCause()).getDamager();
+		else if (event.getEntity().getLastDamageCause() instanceof EntityDamageByProjectileEvent)
+			attacker = (LivingEntity) ((EntityDamageByProjectileEvent) event.getEntity().getLastDamageCause()).getDamager();
+
+		if ( attacker != null ) {
+			KillType killType = KillType.NORMAL;
+
+			//Lets check if this player is camping and adjust the Kill Reason appropriately
+			if (attacker instanceof Player && !(event.getEntity() instanceof Player) && Config.isAntiCamp()) {
+				Player p = (Player) attacker;
+				Camper campPlayer;
+				if (plugin.getCampMap().containsKey(p.getName())) {
+					campPlayer = plugin.getCampMap().get(p.getName());
+					plugin.getServer().getScheduler().cancelTask(campPlayer.getCampTask());
+					if (Utility.getDistance(p.getLocation(), campPlayer.getSpawner()) > Config.getCampRange() * 2) {
+						plugin.getCampMap().remove(p);
+					} else {
+						campPlayer.addKill();
+						campPlayer.setCampTask(plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new CampRemover(p), Config.getCampTime() * 20));
+						if (campPlayer.getKills() > Config.getCampKills()) 
+							killType = KillType.CAMPING;
+						if (campPlayer.getKills() >= Config.getCampKills())
+							p.sendMessage(Config.getCampMessage());
+					}
+				} else {
+					//If this player is near a spawner lets add them to the camp detector
+					Location spawnLoc = Utility.findSpawner(p.getLocation());
+					if (spawnLoc != null) {
+						campPlayer = new Camper(spawnLoc);
+						campPlayer.setCampTask(plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new CampRemover(p), Config.getCampTime() * 20));
+					}
+				}
+			}
+
+			EntityKilledByEntityEvent kEvent = new EntityKilledByEntityEvent(attacker, cEntity, event.getDrops(), killType);
 			plugin.getServer().getPluginManager().callEvent(kEvent);
 			//Reset the super events drops to the subevents drops.
 			event.getDrops().clear();
 			event.getDrops().addAll(kEvent.getDrops());
-			//Remove the entity from the kill map
-			plugin.removeKilled(cEntity);
 		} else {
 			return;
 		}
-		
+
 		/**
 		 * If this is a player, lets run our checks and remove them from combat with any other
 		 * players.
@@ -203,6 +204,9 @@ public class CombatEntityListener extends EntityListener {
 		 */
 		if (cEntity instanceof Player) {
 			Player player = (Player) cEntity;
+			//If this player is in the camp map, lets remove them
+			plugin.getCampMap().remove(player);
+
 			//Check 
 			Iterator<Entity> iter = plugin.getCombatPlayer(player).getReasons().keySet().iterator();
 			while (iter.hasNext()) {
@@ -214,7 +218,7 @@ public class CombatEntityListener extends EntityListener {
 						//If the mapping is empty lets leave combat.
 						if (throwPlayerLeaveCombatEvent(p, LeaveCombatReason.TARGET_DIED))
 							plugin.getServer().getScheduler().cancelTask(plugin.getCombatTask(p));
-						
+
 						plugin.leaveCombat(p);
 					}
 					break;
@@ -249,7 +253,7 @@ public class CombatEntityListener extends EntityListener {
 					//If the mapping is empty lets leave combat.
 					if (throwPlayerLeaveCombatEvent(p, LeaveCombatReason.TARGET_DIED))
 						plugin.getServer().getScheduler().cancelTask(plugin.getCombatTask(p));
-					
+
 					plugin.leaveCombat(p);
 				}
 			}
@@ -276,5 +280,18 @@ public class CombatEntityListener extends EntityListener {
 			return false;
 
 		return true;
+	}
+
+	public class CampRemover implements Runnable {
+
+		Player player;
+		CampRemover(Player player) {
+			this.player = player;
+		}
+
+		@Override
+		public void run() {
+			plugin.getCampMap().remove(player);
+		}
 	}
 }

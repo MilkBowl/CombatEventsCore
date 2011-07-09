@@ -1,6 +1,8 @@
 package net.milkbowl.combatevents;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Chicken;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.CreatureType;
@@ -65,5 +67,23 @@ public class Utility {
 			return true;
 		else
 			return false;
+	}
+
+	public static Location findSpawner(Location loc) {
+		final World world = loc.getWorld();
+		final int blockX = loc.getBlockX();
+		final int blockY = loc.getBlockY();
+		final int blockZ = loc.getBlockZ();
+		final int radius = Config.getCampRange();
+
+		for (int y = blockY-radius; y <= blockY+radius; y++) {
+			for (int x = blockX-radius; x <= blockX+radius; x++) {
+				for (int z = blockZ-radius; z <= blockZ+radius; z++) {
+					if (world.getBlockAt(x, y, z).getType().equals(Material.MOB_SPAWNER))
+						return new Location(world, x, y, z);
+				}
+			}
+		}
+		return null;
 	}
 }
