@@ -29,7 +29,7 @@ public class CombatEventsCore extends JavaPlugin {
 	private CombatPlayerListener playerListener = new CombatPlayerListener(this);
 	public AdminHandler admins = null;
 
-	String plugName = "[CombatEvents]";
+	String plugName;;
 
 	/*
 	 * Defines a reason for the player entering combat
@@ -58,7 +58,8 @@ public class CombatEventsCore extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-
+		plugName = "[" + this.getDescription().getName() + "]";
+		
 		PluginManager pm = this.getServer().getPluginManager();
 		pm.registerEvent(Event.Type.ENTITY_TARGET, entityListener, Priority.Monitor, this);
 		pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Monitor, this);
