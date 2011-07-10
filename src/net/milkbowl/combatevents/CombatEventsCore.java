@@ -59,7 +59,7 @@ public class CombatEventsCore extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		plugName = "[" + this.getDescription().getName() + "]";
-		
+
 		PluginManager pm = this.getServer().getPluginManager();
 		pm.registerEvent(Event.Type.ENTITY_TARGET, entityListener, Priority.Monitor, this);
 		pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Monitor, this);
@@ -129,30 +129,87 @@ public class CombatEventsCore extends JavaPlugin {
 		return inCombat.remove(player.getName());
 	}
 
+	/**
+	 * Gets a player that is in combat.
+	 * Returns null if the player is not in combat.
+	 * 
+	 * @param player
+	 * @return
+	 */
 	public CombatPlayer getCombatPlayer (Player player) {
 		return inCombat.get(player.getName());
 	}
 
+	/**
+	 * Checks to see if a player is in combat or not
+	 * 
+	 * @param player
+	 * @return boolean
+	 */
 	public boolean isInCombat(Player player) {
 		return inCombat.containsKey(player.getName());
 	}
 
+	/**
+	 * Gets the scheduled task for the combat player
+	 * if the player does not exist in the combat map, returns -1.
+	 * 
+	 * @param player
+	 * @return
+	 */
 	public int getCombatTask(Player player) {
-		return inCombat.get(player.getName()).getTaskId();
+		if (isInCombat(player))
+			return inCombat.get(player.getName()).getTaskId();
+		else
+			return -1;
 	}
 
+	/**
+	 * Sets the combat task ID for a player in combat
+	 * Does nothing if the player is not in the map.
+	 * 
+	 * @param player
+	 * @param taskId
+	 */
 	public void setCombatTask(Player player, int taskId) {
-		inCombat.get(player.getName()).setTaskId(taskId);
+		if (isInCombat(player))
+			inCombat.get(player.getName()).setTaskId(taskId);
 	}
 
+	/**
+	 * Updates a players reason for being in combat
+	 * does nothing if the player is not in the map.
+	 * 
+	 * @param player
+	 * @param entity
+	 * @param reason
+	 */
 	public void setCombatReason(Player player, Entity entity, CombatReason reason) {
-		inCombat.get(player.getName()).addReason(entity, reason);
+		if(isInCombat(player))
+			inCombat.get(player.getName()).addReason(entity, reason);
 	}
 
+	/**
+	 * Gets a players reason for being in combat with the specified entity.
+	 * If the player or the entity are not in either map, returns null;
+	 * 
+	 * @param player
+	 * @param entity
+	 * @return
+	 */
 	public CombatReason getCombatReason (Player player, Entity entity) {
-		return inCombat.get(player.getName()).getReason(entity);
+		if (isInCombat(player))
+			if (inCombat.get(player.getName()).getReasons().containsKey(entity))
+				return inCombat.get(player.getName()).getReason(entity);
+
+		return null;
 	}
 
+	/**
+	 * Returns a HashMap collection of the current players tagged as campers
+	 * 
+	 * @return a HashMap of the current campers
+	 */
 	public Map<String, Camper> getCampMap() {
 		return campMap;
 	}
