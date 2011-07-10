@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 
 import net.milkbowl.administrate.AdminHandler;
 import net.milkbowl.administrate.Administrate;
+import net.milkbowl.combatevents.listeners.CombatEntityListener;
+import net.milkbowl.combatevents.listeners.CombatPlayerListener;
 import net.milkbowl.combatevents.tasks.LeaveCombatTask;
 
 import org.bukkit.entity.Entity;
@@ -22,7 +24,7 @@ public class CombatEventsCore extends JavaPlugin {
 	private static Logger log = Logger.getLogger("Minecraft");
 	private Map<String, Camper> campMap = new HashMap<String, Camper>();
 	private Map<String, CombatPlayer> inCombat = Collections.synchronizedMap(new HashMap<String, CombatPlayer>());
-	
+
 	private CombatEntityListener entityListener = new CombatEntityListener(this);
 	private CombatPlayerListener playerListener = new CombatPlayerListener(this);
 	public AdminHandler admins = null;
@@ -39,16 +41,16 @@ public class CombatEventsCore extends JavaPlugin {
 	public enum LeaveCombatReason {
 		QUIT, KICK, ERROR, TIMED, DEATH, TARGET_DIED, CUSTOM
 	}
-	
+
 	public enum KillType {
 		NORMAL, PROJECTILE, CAMPING, CUSTOM
 	}
-	
+
 	@Override
 	public void onLoad() {
 		Config.initialize(this);
 	}
-	
+
 	@Override
 	public void onDisable() {
 		log.info(plugName + " - v" + this.getDescription().getVersion() + " disabled!");
@@ -89,7 +91,8 @@ public class CombatEventsCore extends JavaPlugin {
 	public void enterCombat(Player player, CombatPlayer cPlayer, Entity entity, CombatReason reason) {
 		if (!inCombat.containsKey(player.getName())) {
 			inCombat.put(player.getName(), cPlayer);
-			player.sendMessage(Config.getEnterCombatMessage());
+			if (Config.isEnableCombatMessages())
+				player.sendMessage(Config.getEnterCombatMessage());
 		} else if (inCombat.get(player.getName()).getReason(entity) == null){
 			//Add a new reason and remake the task for leaving combat
 			LeaveCombatTask leaveTask = new LeaveCombatTask(player, LeaveCombatReason.TIMED, this);
@@ -117,7 +120,8 @@ public class CombatEventsCore extends JavaPlugin {
 	 * @return
 	 */
 	public CombatPlayer leaveCombat(Player player) {
-		player.sendMessage(Config.getLeaveCombatMessage());
+		if (Config.isEnableCombatMessages())
+			player.sendMessage(Config.getLeaveCombatMessage());
 		//Cancel the task
 		if (this.getServer().getScheduler().isQueued(getCombatTask(player)))
 			this.getServer().getScheduler().cancelTask(getCombatTask(player));

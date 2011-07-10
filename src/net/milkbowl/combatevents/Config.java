@@ -21,6 +21,7 @@ public class Config {
 	
 	private static Set<String> denyCommands = new HashSet<String>();
 	
+	private static boolean enableCombatMessages = true;
 	private static String denyCommandMessage = "You can not use that command while in combat!";
 	private static String leaveCombatMessage = "You have left combat!";
 	private static String enterCombatMessage = "You have entered combat!";
@@ -29,7 +30,7 @@ public class Config {
 	//Camper detection settings
 	private static boolean antiCamp = true;
 	private static int campTime = 60;
-	private static int campRange = 15;
+	private static int campRange = 10;
 	private static int campKills = 3;
 
 	/**
@@ -60,6 +61,7 @@ public class Config {
 			config.setProperty("disabled-commands", null);
 			config.setProperty("target-trigger-range", targetTriggerRange);
 			//Default Messages
+			config.setProperty("messages.enter-leave-enabled", enableCombatMessages);
 			config.setProperty("messages.deny-command", denyCommandMessage);
 			config.setProperty("messages.enter-combat", enterCombatMessage);
 			config.setProperty("messages.leave-combat", leaveCombatMessage);
@@ -78,6 +80,7 @@ public class Config {
 		denyCommands.addAll(config.getStringList("disabled-commands", null));
 		targetTriggerRange = config.getDouble("target-trigger-range", targetTriggerRange);
 		//Load the messages
+		enableCombatMessages = config.getBoolean("messages.enter-leave-enabled", enableCombatMessages);
 		denyCommandMessage = config.getString("messages.deny-command", denyCommandMessage);
 		enterCombatMessage = config.getString("messages.enter-combat", enterCombatMessage);
 		leaveCombatMessage = config.getString("messages.leave-combat", leaveCombatMessage);
@@ -98,6 +101,10 @@ public class Config {
 
 	public static String getCampMessage() {
 		return campMessage;
+	}
+
+	public static boolean isEnableCombatMessages() {
+		return enableCombatMessages;
 	}
 
 	public static boolean isAntiCamp() {

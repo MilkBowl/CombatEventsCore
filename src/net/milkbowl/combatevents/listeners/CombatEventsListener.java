@@ -1,4 +1,4 @@
-package net.milkbowl.combatevents;
+package net.milkbowl.combatevents.listeners;
 
 import net.milkbowl.combatevents.events.EntityKilledByEntityEvent;
 import net.milkbowl.combatevents.events.PlayerEnterCombatEvent;

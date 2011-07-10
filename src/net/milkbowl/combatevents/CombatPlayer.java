@@ -18,7 +18,7 @@ public class CombatPlayer {
 	private ItemStack[] inventory;
 	private int taskId;
 
-	CombatPlayer(Player player, CombatReason reason, Entity entity, CombatEventsCore plugin) {
+	public CombatPlayer(Player player, CombatReason reason, Entity entity, CombatEventsCore plugin) {
 		this.player = player;
 		this.inventory = player.getInventory().getContents();
 		reasons = new HashMap<Entity, CombatReason>(2);

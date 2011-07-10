@@ -1,7 +1,12 @@
-package net.milkbowl.combatevents;
+package net.milkbowl.combatevents.listeners;
 
 import java.util.Iterator;
 
+import net.milkbowl.combatevents.Camper;
+import net.milkbowl.combatevents.CombatEventsCore;
+import net.milkbowl.combatevents.CombatPlayer;
+import net.milkbowl.combatevents.Config;
+import net.milkbowl.combatevents.Utility;
 import net.milkbowl.combatevents.events.EntityKilledByEntityEvent;
 import net.milkbowl.combatevents.events.PlayerEnterCombatEvent;
 import net.milkbowl.combatevents.events.PlayerLeaveCombatEvent;
@@ -26,7 +31,7 @@ import net.milkbowl.combatevents.CombatEventsCore.LeaveCombatReason;
 public class CombatEntityListener extends EntityListener {
 
 	private CombatEventsCore plugin;
-	CombatEntityListener(CombatEventsCore plugin) {
+	public CombatEntityListener(CombatEventsCore plugin) {
 		this.plugin = plugin;
 	}
 
