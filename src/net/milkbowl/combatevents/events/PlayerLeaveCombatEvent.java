@@ -4,18 +4,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 
+import net.milkbowl.combatevents.CombatEventsCore.CombatReason;
 import net.milkbowl.combatevents.CombatEventsCore.LeaveCombatReason;
 
 @SuppressWarnings("serial")
 public class PlayerLeaveCombatEvent extends Event implements Cancellable {
 	private boolean cancel = false;
 	Player player;
-	LeaveCombatReason reason;
+	LeaveCombatReason leaveReason;
+	CombatReason[] reasons;
 
-	public PlayerLeaveCombatEvent(Player player, LeaveCombatReason reason) {
+	public PlayerLeaveCombatEvent(Player player, LeaveCombatReason leaveReason, CombatReason[] reasons) {
 		super("PlayerLeaveCombatEvent");
 		this.player = player;
-		this.reason = reason;
+		this.leaveReason = leaveReason;
+		this.reasons = reasons;
 	}
 
 	@Override
@@ -29,19 +32,23 @@ public class PlayerLeaveCombatEvent extends Event implements Cancellable {
 	 * 
 	 */
 	public void setCancelled(boolean cancel) {
-		if (reason.equals(LeaveCombatReason.TIMED) || reason.equals(LeaveCombatReason.CUSTOM))
+		if (leaveReason.equals(LeaveCombatReason.TIMED) || leaveReason.equals(LeaveCombatReason.CUSTOM))
 			this.cancel = cancel;
 	}
 
 	public LeaveCombatReason getReason() {
-		return reason;
+		return leaveReason;
 	}
 
 	public void setReason(LeaveCombatReason reason) {
-		this.reason = reason;
+		this.leaveReason = reason;
 	}
 
 	public Player getPlayer() {
 		return player;
+	}
+	
+	public CombatReason[] getCombatReasons() {
+		return reasons;
 	}
 }

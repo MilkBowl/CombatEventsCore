@@ -213,15 +213,15 @@ public class CombatEntityListener extends EntityListener {
 			plugin.getCampMap().remove(player);
 
 			//Check 
-			Iterator<Entity> iter = plugin.getCombatPlayer(player).getReasons().keySet().iterator();
+			Iterator<Entity> iter = plugin.getCombatPlayer(player).getReasonMap().keySet().iterator();
 			while (iter.hasNext()) {
 				Entity entity = iter.next();
 				if (entity instanceof Player) {
 					Player p = (Player) entity;
-					plugin.getCombatPlayer(p).removeReason(player);
-					if (plugin.getCombatPlayer(p).getReasons().isEmpty()) {
+					CombatReason lastReason = plugin.getCombatPlayer(p).removeReason(player);
+					if (plugin.getCombatPlayer(p).getReasonMap().isEmpty()) {
 						//If the mapping is empty lets leave combat.
-						if (throwPlayerLeaveCombatEvent(p, LeaveCombatReason.TARGET_DIED))
+						if (throwPlayerLeaveCombatEvent(p, LeaveCombatReason.TARGET_DIED, new CombatReason[] {lastReason}))
 							plugin.getServer().getScheduler().cancelTask(plugin.getCombatTask(p));
 
 						plugin.leaveCombat(p);
@@ -229,9 +229,15 @@ public class CombatEntityListener extends EntityListener {
 					break;
 				}
 			}
-			if (throwPlayerLeaveCombatEvent(player, LeaveCombatReason.DEATH))
+			/**
+			 * remove the Killed player from combat and remove their combat reasons.
+			 * 
+			 */
+			if (throwPlayerLeaveCombatEvent(player, LeaveCombatReason.DEATH, plugin.getCombatPlayer(player).getReasons())) {
+				plugin.getCombatPlayer(player).clearReasons();
 				//Cancel the task and remove the player from the combat map and send our leave combat message
 				plugin.getServer().getScheduler().cancelTask(plugin.getCombatTask(player));
+			}
 			plugin.leaveCombat(player);	
 		} 
 		/**
@@ -242,7 +248,12 @@ public class CombatEntityListener extends EntityListener {
 			for ( Player p : plugin.getServer().getOnlinePlayers() ) {
 				if (plugin.getCombatPlayer(p) == null)
 					continue;
-				Iterator<Entity> iter = plugin.getCombatPlayer(p).getReasons().keySet().iterator();
+				
+				CombatReason[] lastReasons = null;
+				if (plugin.getCombatPlayer(p).getReasons().length == 1)
+					lastReasons =  plugin.getCombatPlayer(p).getReasons();
+				
+				Iterator<Entity> iter = plugin.getCombatPlayer(p).getReasonMap().keySet().iterator();
 				while (iter.hasNext()) {
 					Entity entity = iter.next();
 					if (entity.equals(cEntity)) {
@@ -254,9 +265,9 @@ public class CombatEntityListener extends EntityListener {
 				 *  After we removed the entity, lets kick the player out of combat if
 				 *  they have no more reasons to be in combat
 				 */
-				if (plugin.getCombatPlayer(p).getReasons().isEmpty()) {
+				if (plugin.getCombatPlayer(p).getReasonMap().isEmpty()) {
 					//If the mapping is empty lets leave combat.
-					if (throwPlayerLeaveCombatEvent(p, LeaveCombatReason.TARGET_DIED))
+					if (throwPlayerLeaveCombatEvent(p, LeaveCombatReason.TARGET_DIED, lastReasons))
 						plugin.getServer().getScheduler().cancelTask(plugin.getCombatTask(p));
 
 					plugin.leaveCombat(p);
@@ -265,8 +276,8 @@ public class CombatEntityListener extends EntityListener {
 		}
 	}
 
-	private boolean throwPlayerLeaveCombatEvent(Player player, LeaveCombatReason reason) {
-		PlayerLeaveCombatEvent event = new PlayerLeaveCombatEvent(player, reason);
+	private boolean throwPlayerLeaveCombatEvent(Player player, LeaveCombatReason leaveReason, CombatReason[] reasons) {
+		PlayerLeaveCombatEvent event = new PlayerLeaveCombatEvent(player, leaveReason, reasons);
 		plugin.getServer().getPluginManager().callEvent(event);
 		//Return if the event was successful
 		return !event.isCancelled();

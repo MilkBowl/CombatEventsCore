@@ -24,10 +24,10 @@ public class CombatPlayer {
 		reasons = new HashMap<Entity, CombatReason>(2);
 		reasons.put(entity, reason);
 		//if we create a new object always force the player into combat so make a new scheduler for leaving combat
-		taskId = plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new LeaveCombatTask(player, LeaveCombatReason.TIMED, plugin), Config.getCombatTime() * 20);
+		taskId = plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new LeaveCombatTask(player, LeaveCombatReason.TIMED, (CombatReason[]) reasons.values().toArray(), plugin), Config.getCombatTime() * 20);
 	}
 
-	public Map<Entity, CombatReason> getReasons() {
+	public Map<Entity, CombatReason> getReasonMap() {
 		return reasons;
 	}
 
@@ -38,9 +38,13 @@ public class CombatPlayer {
 	public CombatReason getReason(Entity entity) {
 		return this.reasons.get(entity);
 	}
+	
+	public CombatReason[] getReasons() {
+		return (CombatReason[]) this.reasons.values().toArray();
+	}
 
-	public void removeReason(Entity entity) {
-		this.reasons.remove(entity);
+	public CombatReason removeReason(Entity entity) {
+		return this.reasons.remove(entity);
 	}
 	
 	public void clearReasons() {

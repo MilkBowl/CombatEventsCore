@@ -1,6 +1,7 @@
 package net.milkbowl.combatevents.listeners;
 
 import net.milkbowl.combatevents.CombatEventsCore;
+import net.milkbowl.combatevents.CombatEventsCore.CombatReason;
 import net.milkbowl.combatevents.Config;
 import net.milkbowl.combatevents.events.PlayerLeaveCombatEvent;
 
@@ -36,19 +37,24 @@ public class CombatPlayerListener extends PlayerListener {
 	public void onPlayerQuit (PlayerQuitEvent event) { 
 		//Cleanup the player if they are kicked.
 		if (plugin.isInCombat(event.getPlayer())) {
-			if (throwPlayerLeaveCombatEvent(event.getPlayer(), LeaveCombatReason.QUIT))
+			CombatReason[] cReasons = plugin.getCombatPlayer(event.getPlayer()).getReasons();
+			plugin.getCombatPlayer(event.getPlayer()).clearReasons();
+			if (throwPlayerLeaveCombatEvent(event.getPlayer(), LeaveCombatReason.QUIT, cReasons))
 				plugin.leaveCombat(event.getPlayer());
 		}
 	}
 
 	public void onPlayerKick (PlayerKickEvent event) {
-		if (plugin.isInCombat(event.getPlayer()))
-			if (throwPlayerLeaveCombatEvent(event.getPlayer(), LeaveCombatReason.KICK))
+		if (plugin.isInCombat(event.getPlayer())) {
+			CombatReason[] cReasons = plugin.getCombatPlayer(event.getPlayer()).getReasons();
+			plugin.getCombatPlayer(event.getPlayer()).clearReasons();
+			if (throwPlayerLeaveCombatEvent(event.getPlayer(), LeaveCombatReason.KICK, cReasons))
 				plugin.leaveCombat(event.getPlayer());
+		}
 	}
 
-	private boolean throwPlayerLeaveCombatEvent(Player player, LeaveCombatReason reason) {
-		PlayerLeaveCombatEvent event = new PlayerLeaveCombatEvent(player, reason);
+	private boolean throwPlayerLeaveCombatEvent(Player player, LeaveCombatReason reason, CombatReason[] cReasons) {
+		PlayerLeaveCombatEvent event = new PlayerLeaveCombatEvent(player, reason, cReasons);
 		plugin.getServer().getPluginManager().callEvent(event);
 		//Return if the event was successful
 		return !event.isCancelled();

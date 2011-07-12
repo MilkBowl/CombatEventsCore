@@ -96,18 +96,18 @@ public class CombatEventsCore extends JavaPlugin {
 				player.sendMessage(Config.getEnterCombatMessage());
 		} else if (inCombat.get(player.getName()).getReason(entity) == null){
 			//Add a new reason and remake the task for leaving combat
-			LeaveCombatTask leaveTask = new LeaveCombatTask(player, LeaveCombatReason.TIMED, this);
 			CombatPlayer thisCPlayer = inCombat.get(player.getName());
 			thisCPlayer.setInventory(cPlayer.getInventory());
 			thisCPlayer.addReason(entity, reason);
+			LeaveCombatTask leaveTask = new LeaveCombatTask(player, LeaveCombatReason.TIMED, thisCPlayer.getReasons(), this);
 			//Cancel our leave combat task and remake a new one
 			getServer().getScheduler().cancelTask(thisCPlayer.getTaskId());
 			thisCPlayer.setTaskId(getServer().getScheduler().scheduleAsyncDelayedTask(this, leaveTask, Config.getCombatTime() * 20));
 		} else {
 			//Since this entity is already in the map lets just refresh their inventory and the timer
-			LeaveCombatTask leaveTask = new LeaveCombatTask(player, LeaveCombatReason.TIMED, this);
 			CombatPlayer thisCPlayer = inCombat.get(player.getName());
 			thisCPlayer.setInventory(cPlayer.getInventory());
+			LeaveCombatTask leaveTask = new LeaveCombatTask(player, LeaveCombatReason.TIMED, thisCPlayer.getReasons(), this);
 			//Cancel our leave combat task and remake a new one
 			getServer().getScheduler().cancelTask(thisCPlayer.getTaskId());
 			thisCPlayer.setTaskId(getServer().getScheduler().scheduleAsyncDelayedTask(this, leaveTask, Config.getCombatTime() * 20));
@@ -199,7 +199,7 @@ public class CombatEventsCore extends JavaPlugin {
 	 */
 	public CombatReason getCombatReason (Player player, Entity entity) {
 		if (isInCombat(player))
-			if (inCombat.get(player.getName()).getReasons().containsKey(entity))
+			if (inCombat.get(player.getName()).getReasonMap().containsKey(entity))
 				return inCombat.get(player.getName()).getReason(entity);
 
 		return null;
