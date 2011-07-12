@@ -29,7 +29,7 @@ public class CombatEventsCore extends JavaPlugin {
 	private CombatPlayerListener playerListener = new CombatPlayerListener(this);
 	public AdminHandler admins = null;
 
-	String plugName;;
+	String plugName;
 
 	/*
 	 * Defines a reason for the player entering combat
@@ -99,6 +99,7 @@ public class CombatEventsCore extends JavaPlugin {
 			CombatPlayer thisCPlayer = inCombat.get(player.getName());
 			thisCPlayer.setInventory(cPlayer.getInventory());
 			thisCPlayer.addReason(entity, reason);
+			thisCPlayer.setLastLocation(player.getLocation());
 			LeaveCombatTask leaveTask = new LeaveCombatTask(player, LeaveCombatReason.TIMED, thisCPlayer.getReasons(), this);
 			//Cancel our leave combat task and remake a new one
 			getServer().getScheduler().cancelTask(thisCPlayer.getTaskId());
@@ -107,6 +108,7 @@ public class CombatEventsCore extends JavaPlugin {
 			//Since this entity is already in the map lets just refresh their inventory and the timer
 			CombatPlayer thisCPlayer = inCombat.get(player.getName());
 			thisCPlayer.setInventory(cPlayer.getInventory());
+			thisCPlayer.setLastLocation(player.getLocation());
 			LeaveCombatTask leaveTask = new LeaveCombatTask(player, LeaveCombatReason.TIMED, thisCPlayer.getReasons(), this);
 			//Cancel our leave combat task and remake a new one
 			getServer().getScheduler().cancelTask(thisCPlayer.getTaskId());

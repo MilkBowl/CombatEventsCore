@@ -5,6 +5,7 @@ import java.util.Map;
 
 import net.milkbowl.combatevents.tasks.LeaveCombatTask;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -16,10 +17,12 @@ public class CombatPlayer {
 	private Player player;
 	private Map<Entity, CombatReason> reasons;
 	private ItemStack[] inventory;
+	private Location lastLocation;
 	private int taskId;
 
 	public CombatPlayer(Player player, CombatReason reason, Entity entity, CombatEventsCore plugin) {
 		this.player = player;
+		this.lastLocation = player.getLocation();
 		this.inventory = player.getInventory().getContents();
 		reasons = new HashMap<Entity, CombatReason>(2);
 		reasons.put(entity, reason);
@@ -57,6 +60,14 @@ public class CombatPlayer {
 
 	public void setInventory(ItemStack[] inventory) {
 		this.inventory = inventory;
+	}
+
+	public Location getLastLocation() {
+		return lastLocation;
+	}
+
+	public void setLastLocation(Location lastLocation) {
+		this.lastLocation = lastLocation;
 	}
 
 	public Player getPlayer() {
