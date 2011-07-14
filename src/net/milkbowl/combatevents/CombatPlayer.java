@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class CombatPlayer {
 	private Player player;
-	private Map<Entity, CombatReason> reasons;
+	private Map<Entity, CombatReason> reasons = new HashMap<Entity, CombatReason>(2);
 	private ItemStack[] inventory;
 	private Location lastLocation;
 	private int taskId;
@@ -22,7 +22,6 @@ public class CombatPlayer {
 		this.player = player;
 		this.lastLocation = player.getLocation();
 		this.inventory = player.getInventory().getContents();
-		reasons = new HashMap<Entity, CombatReason>(2);
 		reasons.put(entity, reason);
 		//if we create a new object always force the player into combat so make a new scheduler for leaving combat
 		taskId = plugin.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new LeaveCombatTask(player, LeaveCombatReason.TIMED, (CombatReason[]) reasons.values().toArray(), plugin), Config.getCombatTime() * 20);
