@@ -1,9 +1,10 @@
 package net.milkbowl.combatevents.events;
 
+import net.milkbowl.combatevents.CombatReason;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
-import net.milkbowl.combatevents.CombatEventsCore.CombatReason;
 
 
 @SuppressWarnings("serial")

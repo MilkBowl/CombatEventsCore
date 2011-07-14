@@ -5,8 +5,8 @@ import java.util.concurrent.Future;
 import org.bukkit.entity.Player;
 
 import net.milkbowl.combatevents.CombatEventsCore;
-import net.milkbowl.combatevents.CombatEventsCore.CombatReason;
-import net.milkbowl.combatevents.CombatEventsCore.LeaveCombatReason;
+import net.milkbowl.combatevents.CombatReason;
+import net.milkbowl.combatevents.LeaveCombatReason;
 
 public class LeaveCombatTask implements Runnable {
 	Player player;

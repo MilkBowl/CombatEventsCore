@@ -1,11 +1,12 @@
 package net.milkbowl.combatevents.events;
 
+import net.milkbowl.combatevents.CombatReason;
+import net.milkbowl.combatevents.LeaveCombatReason;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 
-import net.milkbowl.combatevents.CombatEventsCore.CombatReason;
-import net.milkbowl.combatevents.CombatEventsCore.LeaveCombatReason;
 
 @SuppressWarnings("serial")
 public class PlayerLeaveCombatEvent extends Event implements Cancellable {

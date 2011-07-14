@@ -31,21 +31,6 @@ public class CombatEventsCore extends JavaPlugin {
 
 	String plugName;
 
-	/*
-	 * Defines a reason for the player entering combat
-	 */
-	public enum CombatReason {
-		TARGETED_BY_MOB, DAMAGED_BY_MOB, ATTACKED_MOB, ATTACKED_PLAYER, DAMAGED_BY_PLAYER, PET_TOOK_DAMAGE, PET_ATTACKED, CUSTOM
-	}
-
-	public enum LeaveCombatReason {
-		QUIT, KICK, ERROR, TIMED, DEATH, TARGET_DIED, CUSTOM
-	}
-
-	public enum KillType {
-		NORMAL, PROJECTILE, CAMPING, CUSTOM
-	}
-
 	@Override
 	public void onLoad() {
 		Config.initialize(this);

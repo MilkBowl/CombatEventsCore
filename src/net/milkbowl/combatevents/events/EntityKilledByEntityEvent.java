@@ -2,7 +2,7 @@ package net.milkbowl.combatevents.events;
 
 import java.util.List;
 
-import net.milkbowl.combatevents.CombatEventsCore.KillType;
+import net.milkbowl.combatevents.KillType;
 
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;

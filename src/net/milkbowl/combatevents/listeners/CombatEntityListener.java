@@ -5,7 +5,10 @@ import java.util.Iterator;
 import net.milkbowl.combatevents.Camper;
 import net.milkbowl.combatevents.CombatEventsCore;
 import net.milkbowl.combatevents.CombatPlayer;
+import net.milkbowl.combatevents.CombatReason;
 import net.milkbowl.combatevents.Config;
+import net.milkbowl.combatevents.KillType;
+import net.milkbowl.combatevents.LeaveCombatReason;
 import net.milkbowl.combatevents.Utility;
 import net.milkbowl.combatevents.events.EntityKilledByEntityEvent;
 import net.milkbowl.combatevents.events.PlayerEnterCombatEvent;
@@ -23,10 +26,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityTargetEvent;
-
-import net.milkbowl.combatevents.CombatEventsCore.CombatReason;
-import net.milkbowl.combatevents.CombatEventsCore.KillType;
-import net.milkbowl.combatevents.CombatEventsCore.LeaveCombatReason;
 
 public class CombatEntityListener extends EntityListener {
 

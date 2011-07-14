@@ -10,8 +10,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import net.milkbowl.combatevents.CombatEventsCore.CombatReason;
-import net.milkbowl.combatevents.CombatEventsCore.LeaveCombatReason;
 
 public class CombatPlayer {
 	private Player player;

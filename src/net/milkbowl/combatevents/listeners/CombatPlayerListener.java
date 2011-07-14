@@ -1,8 +1,9 @@
 package net.milkbowl.combatevents.listeners;
 
 import net.milkbowl.combatevents.CombatEventsCore;
-import net.milkbowl.combatevents.CombatEventsCore.CombatReason;
+import net.milkbowl.combatevents.CombatReason;
 import net.milkbowl.combatevents.Config;
+import net.milkbowl.combatevents.LeaveCombatReason;
 import net.milkbowl.combatevents.events.PlayerLeaveCombatEvent;
 
 import org.bukkit.entity.Player;
@@ -11,7 +12,6 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import net.milkbowl.combatevents.CombatEventsCore.LeaveCombatReason;
 
 public class CombatPlayerListener extends PlayerListener {
 	CombatEventsCore plugin;
