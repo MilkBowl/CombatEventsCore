@@ -46,7 +46,9 @@ public class CombatEventsCore extends JavaPlugin {
 		plugName = "[" + this.getDescription().getName() + "]";
 
 		PluginManager pm = this.getServer().getPluginManager();
-		pm.registerEvent(Event.Type.ENTITY_TARGET, entityListener, Priority.Monitor, this);
+		if (Config.isTargetTriggersCombat())
+			pm.registerEvent(Event.Type.ENTITY_TARGET, entityListener, Priority.Monitor, this);
+
 		pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Monitor, this);
 		pm.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Highest, this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Monitor, this);

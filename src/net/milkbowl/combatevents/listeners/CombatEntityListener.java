@@ -166,8 +166,6 @@ public class CombatEntityListener extends EntityListener {
 			killType = KillType.PROJECTILE;
 		}
 		if ( attacker != null ) {
-			
-
 			//Lets check if this player is camping and adjust the Kill Reason appropriately
 			if (attacker instanceof Player && !(event.getEntity() instanceof Player) && Config.isAntiCamp()) {
 				Player p = (Player) attacker;
@@ -250,11 +248,11 @@ public class CombatEntityListener extends EntityListener {
 			for ( Player p : plugin.getServer().getOnlinePlayers() ) {
 				if (plugin.getCombatPlayer(p) == null)
 					continue;
-				
+
 				CombatReason[] lastReasons = null;
 				if (plugin.getCombatPlayer(p).getReasons().length == 1)
 					lastReasons =  plugin.getCombatPlayer(p).getReasons();
-				
+
 				Iterator<Entity> iter = plugin.getCombatPlayer(p).getReasonMap().keySet().iterator();
 				while (iter.hasNext()) {
 					Entity entity = iter.next();
