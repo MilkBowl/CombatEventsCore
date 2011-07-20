@@ -17,6 +17,7 @@ public class CombatEventsListener extends CustomEventListener implements Listene
 
 	/**
 	 * Called when an Entity kills another Entity
+	 * Overridable
 	 * 
 	 * @param event
 	 */
@@ -26,6 +27,7 @@ public class CombatEventsListener extends CustomEventListener implements Listene
 
 	/**
 	 * Called when a player enters combat
+	 * Overridable
 	 * 
 	 * @param event
 	 */
@@ -35,6 +37,7 @@ public class CombatEventsListener extends CustomEventListener implements Listene
 
 	/**
 	 * Called when a player leaves combat
+	 * Overridable
 	 * 
 	 * @param event
 	 */
@@ -42,6 +45,11 @@ public class CombatEventsListener extends CustomEventListener implements Listene
 
 	}
 
+	/**
+	 * This is the custom event handler, do not override this
+	 * if you are implementing the custom events into your plugin.
+	 * 
+	 */
 	public void onCustomEvent(Event event) {
 		if (event instanceof EntityKilledByEntityEvent) {
 			onEntityKilledByEntity((EntityKilledByEntityEvent) event);

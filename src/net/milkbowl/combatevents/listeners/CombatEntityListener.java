@@ -120,15 +120,7 @@ public class CombatEntityListener extends EntityListener {
 				rEntity = subEvent.getEntity();
 			}
 		}
-		/**
-		 * TODO: This event should only change the reason + fire the event on INITIAL combat entering.
-		 *
-		 * We should leave combat after one of the entities dies if we aren't in combat with any other entities
-		 * 
-		 * We need store store a Map of all entities we are in combat with and the associated reason why we
-		 * entered combat to begin with, not continually update that we are in combat over and over.
-		 * Basically if you enter combat with something, that specific combat reason should not change.
-		 */
+		
 		if (reason != null && player != null) {
 			CombatPlayer cPlayer = new CombatPlayer(player, reason, rEntity, plugin);
 			plugin.enterCombat(player, cPlayer, rEntity, reason);
