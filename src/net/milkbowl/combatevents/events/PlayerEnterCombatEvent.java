@@ -6,7 +6,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
 
-
+/**
+ * This event is triggered whenever a player enters combat, such as when being damaged, or attacking
+ * another creature.
+ * 
+ * @author sleak
+ *
+ */
 @SuppressWarnings("serial")
 public class PlayerEnterCombatEvent extends Event {
 
@@ -19,10 +25,21 @@ public class PlayerEnterCombatEvent extends Event {
 		this.reason = reason;
 	}
 
+	/**
+	 * gets the Player that is entering combat.
+	 * 
+	 * @return the Player
+	 */
 	public Player getPlayer() {
 		return player;
 	}
 
+	/**
+	 * Gets the reason that this player is entering combat
+	 * 
+	 * 
+	 * @return a CombatReason
+	 */
 	public CombatReason getReason() {
 		return this.reason;
 	}

@@ -45,7 +45,8 @@
         </jar>
     	<delete dir="bin" />
   </target>
-	  <target name="javadoc" description="Generate JavaDoc">
+  
+  <target name="javadoc" description="Generate JavaDoc">
 		<javadoc packagenames="net.milkbowl.combatevents.events,net.milkbowl.combatevents.listeners,net.milkbowl.combatevents"
 				sourcepath="src"
 				destdir="javadoc"
