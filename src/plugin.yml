@@ -1,6 +1,6 @@
 name: CombatEventsCore
 main: net.milkbowl.combatevents.CombatEventsCore
-version: 1.0
+version: 1.0dev-b000
 author: Sleaker
 description: >
              A plugin that generates combat events.
