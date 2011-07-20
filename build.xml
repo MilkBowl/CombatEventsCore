@@ -9,7 +9,7 @@
 
     <target name="jar" depends="main" />
 	
-    <target name="main" depends="clean, compile, compress" description="Main target">
+    <target name="main" depends="clean, compile, compress, javadoc" description="Main target">
         <echo>Building the .jar file.</echo>
     </target>
 	
@@ -45,4 +45,22 @@
         </jar>
     	<delete dir="bin" />
   </target>
+	  <target name="javadoc" description="Generate JavaDoc">
+		<javadoc packagenames="net.milkbowl.combatevents.events,net.milkbowl.combatevents.listeners,net.milkbowl.combatevents"
+				sourcepath="src"
+				destdir="javadoc"
+				access="public"
+				windowtitle="CombatEventsCore"
+				verbose="false"
+				author="true"
+				version="true">
+
+			<classpath>
+				<fileset dir="lib" includes="**/*.jar"/>
+			</classpath>
+			<bottom>
+				<![CDATA[<b>MilkBukkit, 2011</b>]]>
+			</bottom>
+		</javadoc>
+	  </target>
 </project>
