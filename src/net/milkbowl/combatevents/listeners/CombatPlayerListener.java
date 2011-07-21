@@ -24,12 +24,14 @@ public class CombatPlayerListener extends PlayerListener {
 		if (event.isCancelled() || Config.getDenyCommands().isEmpty())
 			return;
 
-		String message = event.getMessage();
-		for (String cmd : Config.getDenyCommands()) {
-			if (message.startsWith("/" + cmd)) {
-				event.setCancelled(true);
-				event.getPlayer().sendMessage(Config.getDenyCommandMessage());
-				return;
+		if (plugin.isInCombat(event.getPlayer()) ) {
+			String message = event.getMessage();
+			for (String cmd : Config.getDenyCommands()) {
+				if (message.startsWith("/" + cmd)) {
+					event.setCancelled(true);
+					event.getPlayer().sendMessage(Config.getDenyCommandMessage());
+					return;
+				}
 			}
 		}
 	}
