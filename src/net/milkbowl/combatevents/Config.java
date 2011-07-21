@@ -16,8 +16,8 @@ public class Config {
 	private static int combatTime = 10;
 	private static double targetTriggerRange = 20;
 	//Whether pets should toggle combat or not
-	private static boolean petTriggersCombat = true;
-	private static boolean targetTriggersCombat = true;
+	private static boolean petTriggersCombat = false;
+	private static boolean targetTriggersCombat = false;
 	
 	private static Set<String> denyCommands = new HashSet<String>();
 	
