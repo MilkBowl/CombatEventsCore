@@ -184,12 +184,8 @@ public class CombatEntityListener extends EntityListener {
 					}
 				}
 			}
-
 			EntityKilledByEntityEvent kEvent = new EntityKilledByEntityEvent(attacker, cEntity, event.getDrops(), killType);
 			plugin.getServer().getPluginManager().callEvent(kEvent);
-			//Reset the super events drops to the subevents drops.
-			event.getDrops().clear();
-			event.getDrops().addAll(kEvent.getDrops());
 		} else {
 			return;
 		}
