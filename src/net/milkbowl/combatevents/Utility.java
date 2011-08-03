@@ -63,10 +63,8 @@ public class Utility {
 	}
 
 	public static boolean isMonster(CreatureType cType) {
-		if (cType.equals(CreatureType.CREEPER) || cType.equals(CreatureType.GHAST) || cType.equals(CreatureType.GIANT) || cType.equals(CreatureType.PIG_ZOMBIE) || cType.equals(CreatureType.SKELETON) || cType.equals(CreatureType.SLIME) || cType.equals(CreatureType.ZOMBIE) )
-			return true;
-		else
-			return false;
+		return (cType.equals(CreatureType.CREEPER) || cType.equals(CreatureType.GHAST) || cType.equals(CreatureType.GIANT) || cType.equals(CreatureType.PIG_ZOMBIE) || cType.equals(CreatureType.SKELETON) || cType.equals(CreatureType.SLIME) || cType.equals(CreatureType.ZOMBIE) );
+
 	}
 
 	public static Location findSpawner(Location loc) {
