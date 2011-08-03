@@ -19,6 +19,7 @@ import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Tameable;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByProjectileEvent;
@@ -81,40 +82,24 @@ public class CombatEntityListener extends EntityListener {
 				}
 			} else if (subEvent.getEntity() instanceof Player) {
 				player = (Player) subEvent.getEntity();
-				rEntity = subEvent.getDamager();
 				if (subEvent.getDamager() instanceof Player) {
-					pvpPlayer = (Player) subEvent.getDamager();
-					reason = CombatReason.DAMAGED_BY_PLAYER;
-				} else 
-					reason = CombatReason.DAMAGED_BY_MOB;
-			} else if (subEvent.getDamager() instanceof Player && !(subEvent.getEntity() instanceof Player)) {
-				player = (Player) subEvent.getDamager();
-				reason = CombatReason.ATTACKED_MOB;
-				rEntity = subEvent.getEntity();
-			} 
-		} else if (event instanceof EntityDamageByProjectileEvent) {
-			EntityDamageByProjectileEvent subEvent = (EntityDamageByProjectileEvent) event;
-			if (subEvent.getDamager() instanceof Tameable && Config.isPetTriggersCombat()) {
-				player = getOwner((Tameable) subEvent.getDamager());
-				if (player != null) {
-					reason = CombatReason.PET_ATTACKED;
-					rEntity = subEvent.getEntity();
-				}
-			} else if (subEvent.getEntity() instanceof Tameable && Config.isPetTriggersCombat()) {
-				player = getOwner((Tameable) subEvent.getEntity());
-				if (player != null) {
-					reason = CombatReason.PET_TOOK_DAMAGE;
 					rEntity = subEvent.getDamager();
-				}
-			} else if (subEvent.getEntity() instanceof Player) {
-				player = (Player) subEvent.getEntity();
-				rEntity = subEvent.getDamager();
-				if (subEvent.getDamager() instanceof Player) {
 					pvpPlayer = (Player) subEvent.getDamager();
 					reason = CombatReason.DAMAGED_BY_PLAYER;
-				} else
+				} else if (subEvent.getDamager() instanceof Projectile) {
+					Projectile proj = (Projectile) subEvent.getDamager();
+					if (proj.getShooter() instanceof Player) {
+						pvpPlayer = (Player) proj.getShooter();
+						reason = CombatReason.DAMAGED_BY_PLAYER;
+					} else {
+						rEntity = proj.getShooter();
+						reason = CombatReason.DAMAGED_BY_MOB;
+					}
+				} else {
+					rEntity = subEvent.getDamager();
 					reason = CombatReason.DAMAGED_BY_MOB;
-			}  else if (subEvent.getDamager() instanceof Player && !(subEvent.getEntity() instanceof Player)) {
+				}
+			} else if (subEvent.getDamager() instanceof Player && !(subEvent.getEntity() instanceof Player)) {
 				player = (Player) subEvent.getDamager();
 				reason = CombatReason.ATTACKED_MOB;
 				rEntity = subEvent.getEntity();
