@@ -136,11 +136,14 @@ public class CombatEntityListener extends EntityListener {
 		LivingEntity attacker = null;
 		KillType killType = null;
 		if (event.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent) {
-			attacker = (LivingEntity) ((EntityDamageByEntityEvent) event.getEntity().getLastDamageCause()).getDamager();
-			killType = KillType.NORMAL;
-		} else if (event.getEntity().getLastDamageCause() instanceof EntityDamageByProjectileEvent) {
-			attacker = (LivingEntity) ((EntityDamageByProjectileEvent) event.getEntity().getLastDamageCause()).getDamager();
-			killType = KillType.PROJECTILE;
+			EntityDamageByEntityEvent subEvent = (EntityDamageByEntityEvent) event.getEntity().getLastDamageCause();
+			if (subEvent.getDamager() instanceof LivingEntity) {
+				attacker = (LivingEntity) subEvent.getDamager();
+				killType = KillType.NORMAL;
+			} else if (subEvent.getDamager() instanceof Projectile) {
+				attacker = ((Projectile) subEvent.getDamager()).getShooter();
+				killType = KillType.PROJECTILE;
+			}
 		}
 		if ( attacker != null ) {
 			//Lets check if this player is camping and adjust the Kill Reason appropriately
