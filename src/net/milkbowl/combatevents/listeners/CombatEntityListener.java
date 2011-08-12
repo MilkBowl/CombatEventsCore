@@ -22,7 +22,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Tameable;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageByProjectileEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityListener;
@@ -232,6 +231,7 @@ public class CombatEntityListener extends EntityListener {
 				Iterator<Entity> iter = plugin.getCombatPlayer(p).getReasonMap().keySet().iterator();
 				while (iter.hasNext()) {
 					Entity entity = iter.next();
+					if (entity == null) continue;
 					if (entity.equals(cEntity)) {
 						iter.remove();
 						break;
