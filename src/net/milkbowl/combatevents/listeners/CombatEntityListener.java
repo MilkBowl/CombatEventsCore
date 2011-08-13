@@ -193,6 +193,7 @@ public class CombatEntityListener extends EntityListener {
 				Entity entity = iter.next();
 				if (entity instanceof Player) {
 					Player p = (Player) entity;
+					if (plugin.getCombatPlayer(p) == null) continue;
 					CombatReason lastReason = plugin.getCombatPlayer(p).removeReason(player);
 					if (plugin.getCombatPlayer(p).getReasonMap().isEmpty()) {
 						//If the mapping is empty lets leave combat.
