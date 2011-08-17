@@ -187,6 +187,10 @@ public class CombatEntityListener extends EntityListener {
 			//If this player is in the camp map, lets remove them
 			plugin.getCampMap().remove(player);
 
+			
+			if (plugin.getCombatPlayer(player).getReasonMap() == null || plugin.getCombatPlayer(player).getReasonMap().isEmpty()) {
+				return;
+			}
 			//Check 
 			Iterator<Entity> iter = plugin.getCombatPlayer(player).getReasonMap().keySet().iterator();
 			while (iter.hasNext()) {
