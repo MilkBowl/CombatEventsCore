@@ -188,7 +188,7 @@ public class CombatEntityListener extends EntityListener {
 			plugin.getCampMap().remove(player);
 
 			
-			if (plugin.getCombatPlayer(player).getReasonMap() == null || plugin.getCombatPlayer(player).getReasonMap().isEmpty()) {
+			if (plugin.getCombatPlayer(player) == null || plugin.getCombatPlayer(player).getReasonMap() == null || plugin.getCombatPlayer(player).getReasonMap().isEmpty()) {
 				return;
 			}
 			//Check 
