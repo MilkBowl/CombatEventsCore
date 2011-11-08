@@ -7,6 +7,7 @@ public enum LeaveCombatReason {
 	ERROR,
 	TIMED,
 	DEATH,
+	SUICIDE,
 	TARGET_DIED,
 	CUSTOM;
 	

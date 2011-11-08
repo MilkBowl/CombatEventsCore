@@ -104,7 +104,7 @@ public class CombatEntityListener extends EntityListener {
 				rEntity = subEvent.getEntity();
 			}
 		}
-		
+
 		if (reason != null && player != null) {
 			CombatPlayer cPlayer = new CombatPlayer(player, reason, rEntity, plugin);
 			plugin.enterCombat(player, cPlayer, rEntity, reason);
@@ -187,7 +187,7 @@ public class CombatEntityListener extends EntityListener {
 			//If this player is in the camp map, lets remove them
 			plugin.getCampMap().remove(player);
 
-			
+
 			if (plugin.getCombatPlayer(player) == null || plugin.getCombatPlayer(player).getReasonMap() == null || plugin.getCombatPlayer(player).getReasonMap().isEmpty()) {
 				return;
 			}
@@ -213,7 +213,13 @@ public class CombatEntityListener extends EntityListener {
 			 * remove the Killed player from combat and remove their combat reasons.
 			 * 
 			 */
-			if (throwPlayerLeaveCombatEvent(player, LeaveCombatReason.DEATH, plugin.getCombatPlayer(player).getReasons())) {
+			LeaveCombatReason lcr = null;
+			if (cEntity.equals(attacker))
+				lcr = LeaveCombatReason.SUICIDE;
+			else
+				lcr = LeaveCombatReason.DEATH;
+
+			if (throwPlayerLeaveCombatEvent(player, lcr, plugin.getCombatPlayer(player).getReasons())) {
 				plugin.getCombatPlayer(player).clearReasons();
 				//Cancel the task and remove the player from the combat map and send our leave combat message
 				plugin.getServer().getScheduler().cancelTask(plugin.getCombatTask(player));
