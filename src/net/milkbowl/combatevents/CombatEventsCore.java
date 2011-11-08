@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import net.milkbowl.administrate.AdminHandler;
-import net.milkbowl.administrate.Administrate;
 import net.milkbowl.combatevents.listeners.CombatEntityListener;
 import net.milkbowl.combatevents.listeners.CombatPlayerListener;
 import net.milkbowl.combatevents.tasks.LeaveCombatTask;
@@ -15,7 +13,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,7 +24,6 @@ public class CombatEventsCore extends JavaPlugin {
 
 	private CombatEntityListener entityListener = new CombatEntityListener(this);
 	private CombatPlayerListener playerListener = new CombatPlayerListener(this);
-	public AdminHandler admins = null;
 
 	String plugName;
 
@@ -55,19 +51,7 @@ public class CombatEventsCore extends JavaPlugin {
 		pm.registerEvent(Event.Type.PLAYER_KICK, playerListener, Priority.Monitor, this);
 		pm.registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, playerListener, Priority.High, this);
 
-		//setup our optional dependencies
-		setupOptionals();
 		log.info(plugName + " - v" + this.getDescription().getVersion() + " enabled!");
-	}
-
-	private void setupOptionals() {
-		if (admins == null) {
-			Plugin admin = this.getServer().getPluginManager().getPlugin("Administrate");
-			if (admin != null) {
-				admins = ((Administrate) admin).getAdminHandler();
-				log.info(plugName + " - Successfully hooked into Administrate v" + admin.getDescription().getVersion());
-			}
-		} 
 	}
 
 	/**
